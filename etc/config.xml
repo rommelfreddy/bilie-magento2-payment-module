@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <payafterdelivery>
+                <active>1</active>
+                <model>Magento\BilliePaymentMethod\Model\Payment\Payafterdelivery</model>
+                <order_status>pending</order_status>
+                <payment_action>true</payment_action>
+                <title>Billie Rechnungskauf</title>
+                <description>Bezahlen Sie bequem und sicher auf Rechnung - innerhalb von {Zahlungsziel} Tagen nach Erhalt der Ware.</description>
+                <allowspecific>0</allowspecific>
+                <group>Offline</group>
+                <can_use_internal>1</can_use_internal>
+                <consumer_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <consumer_secret_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+            </payafterdelivery>
+        </payment>
+    </default>
+</config>

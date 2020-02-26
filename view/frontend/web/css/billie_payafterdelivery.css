@@ -1,0 +1,26 @@
+label[for=payafterdelivery] {
+    background: url(../images/billie.png) no-repeat scroll 0px 5px;
+    padding: 4px 20px;
+    color: #ff4338;
+}
+.payment-method-description{
+    padding-left: 22px;
+}
+#payafterdelivery_billiepayment_form div{
+
+    padding: 5px 0;
+
+}
+#payafterdelivery_billiepayment_form label{
+    display: inline-block;
+    width:20%;
+}
+#payafterdelivery_billiepayment_form span label{
+    width:inherit;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+#payafterdelivery_billiepayment_form input[type=text]{
+    width:70%;
+    padding: 2px;
+}
