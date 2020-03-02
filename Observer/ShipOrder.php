@@ -47,7 +47,7 @@ class ShipOrder implements ObserverInterface
                 $billieResponse = $client->shipOrder($billieShipData);
 
 //                Mage::Helper('billie_core/log')->billieLog($order, $billieShipData, $billieResponse);
-                $order->addStatusHistoryComment(__('Billie PayAfterDelivery: shipping information was send for %s. The customer will be charged now', $billieResponse->referenceId));
+                $order->addStatusHistoryComment(__('Billie PayAfterDelivery: shipping information was send for %1. The customer will be charged now', $billieResponse->referenceId));
                 $order->save();
 
             } catch (Exception $error) {

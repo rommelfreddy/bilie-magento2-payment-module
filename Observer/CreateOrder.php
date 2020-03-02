@@ -62,7 +62,7 @@ class CreateOrder implements ObserverInterface
 
 
             $order->setData('billie_reference_id', $billieResponse['uuid']);
-            $order->addStatusHistoryComment(__('Billie PayAfterDelivery: payment accepted for %s', $billieResponse['uuid']));
+            $order->addStatusHistoryComment(__('Billie PayAfterDelivery: payment accepted for %1', $billieResponse['uuid']));
 
             $payment->setData('billie_viban', $billieResponse['bank_account']['iban']);
             $payment->setData('billie_vbic', $billieResponse['bank_account']['bic']);

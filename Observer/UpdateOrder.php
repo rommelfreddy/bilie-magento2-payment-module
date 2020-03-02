@@ -62,7 +62,7 @@ class UpdateOrder implements ObserverInterface
 
                  } else {
 
-                     $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The amount for transaction with the id %s was successfully reduced.', $order->getBillieReferenceId()));
+                     $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The amount for transaction with the id %1 was successfully reduced.', $order->getBillieReferenceId()));
                      $order->save();
 
                  }
@@ -73,7 +73,7 @@ class UpdateOrder implements ObserverInterface
                  $billieResponse = $client->cancelOrder($billieCancelData);
 
 //                 Mage::Helper('billie_core/log')->billieLog($order, $billieCancelData, $billieResponse);
-                 $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %s was successfully canceled.', $order->getBillieReferenceId()));
+                 $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
                  $order->save();
 
              }

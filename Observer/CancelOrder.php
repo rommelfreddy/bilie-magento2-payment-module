@@ -48,7 +48,7 @@ class CancelOrder implements ObserverInterface
             $billieResponse = $client->cancelOrder($billieCancelData);
 
 //             Mage::Helper('billie_core/log')->billieLog($order, $billieCancelData, $billieResponse);
-            $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %s was successfully canceled.', $order->getBillieReferenceId()));
+            $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
             $order->save();
 
         } catch (Exception $error) {
