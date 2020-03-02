@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\Payment\Block\Info $block
+ * @see \Magento\Payment\Block\Info
+ */
+$specificInfo = $block->getSpecificInformation();
+?>
+<?= $block->escapeHtml($block->getMethod()->getTitle()) ?>
+<div>
+    <?php echo __('Bitte überweisen Sie den Rechnungsbetrag bis zum %1 unter Angabe des Rechnungsnummer auf folgendes Konto:', $block->getDuration()) ?>
+</div>
+<?php if ($specificInfo) : ?>
+    <table class="data-table admin__table-secondary">
+        <?php foreach ($specificInfo as $label => $value) : ?>
+            <tr>
+                <th><?= $block->escapeHtml($label) ?>:</th>
+                <td>
+                    <?= /* @noEscape */ nl2br($block->escapeHtml(implode("\n", $block->getValueAsArray($value, true)))) ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif;?>
+<?php echo __('Bitte beachten Sie, dass Ihre Rechnung nur dann beglichen ist, wenn Ihre Zahlung auf das oben genannte Konto erfolgt.') ?>
+<?= $block->getChildHtml() ?>

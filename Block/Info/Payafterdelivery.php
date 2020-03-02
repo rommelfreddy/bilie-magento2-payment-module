@@ -22,6 +22,8 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
         parent::__construct($context);
     }
 
+    protected $_template = 'Magento_BilliePaymentMethod::invoice/view/payment.phtml';
+
     /**
      * Prepare information specific to current payment method
      *
@@ -37,6 +39,7 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
         /* if ($oInfo->getBillieLegalForm() && !$this->isAdmin()) {
              $data[__('Legal Form')] = $this->helper('billie_core')->getLegalFormByCode($oInfo->getBillieLegalForm());
          }*/
+
         if ($this->isAdmin()) {
             $data['Account owner'] = $this->getStoreName();
         }
@@ -98,7 +101,7 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
         return $info->getOrder()->getStoreId();
     }
 
-    protected function getDuration()
+    public function getDuration()
     {
 
         $info = $this->getInfo();
