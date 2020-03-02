@@ -23,6 +23,15 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
     }
 
     protected $_template = 'Magento_BilliePaymentMethod::invoice/view/payment.phtml';
+    /**
+     * Render as PDF
+     * @return string
+     */
+    public function toPdf()
+    {
+        $this->setTemplate('Magento_BilliePaymentMethod::invoice/view/pdf/payment.phtml');
+        return $this->toHtml();
+    }
 
     /**
      * Prepare information specific to current payment method
@@ -104,12 +113,12 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
     public function getDuration()
     {
 
-        $info = $this->getInfo();
-        $order = $info->getOrder();
-        $shipping = $order->getShipmentsCollection()->getFirstItem();
 
-        if ($shipping->getCreatedAt()) {
+        if ($this->is_shipped()) {
 
+            $info = $this->getInfo();
+            $order = $info->getOrder();
+            $shipping = $order->getShipmentsCollection()->getFirstItem();
             $date = strtotime($shipping->getCreatedAt());
             $newDate = date('d.m.Y', strtotime( $this->getConfig('payment/magento_billiePaymentMethod/duration') . " day", $date));
 
@@ -117,7 +126,7 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
 
         } else {
 
-            $duration = 'Order is not shipped yet';
+            $duration = __('Order is not shipped yet');
 
         }
 
@@ -147,5 +156,18 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
             ->get('Magento\Framework\App\Config\ScopeConfigInterface')
             ->getValue($config_path);
         return $conf;
+    }
+    public function is_shipped() {
+
+        $shipped = false;
+        $info = $this->getInfo();
+        $order = $info->getOrder();
+        $shipping = $order->getShipmentsCollection()->getFirstItem();
+
+        if ($shipping->getCreatedAt()) {
+            $shipped = true;
+        }
+
+        return $shipped;
     }
 }

@@ -32,3 +32,5 @@
 "VBIC","BIC"
 "VIBAN","IBAN"
 "You have to create a invoice first","You have to create a invoice first"
+"Bitte überweisen Sie den Rechnungsbetrag bis zum %1 unter Angabe des Rechnungsnummer auf folgendes Konto:","Bitte überweisen Sie den Rechnungsbetrag bis zum %1 unter Angabe des Rechnungsnummer auf folgendes Konto:"
+"Bitte beachten Sie, dass Ihre Rechnung nur dann beglichen ist, wenn Ihre Zahlung auf das oben genannte Konto erfolgt.","Bitte beachten Sie, dass Ihre Rechnung nur dann beglichen ist, wenn Ihre Zahlung auf das oben genannte Konto erfolgt."
