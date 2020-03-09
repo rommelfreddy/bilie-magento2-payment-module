@@ -2,9 +2,10 @@ define([
     'jquery',
     'Magento_Checkout/js/view/payment/default',
     'Magento_Checkout/js/model/quote',
+    'Magento_Customer/js/model/customer',
     'Magento_Ui/js/model/messageList',
     'mage/validation'
-], function ($, Component, quote, globalMessageList) {
+], function ($, Component, quote, customer,  globalMessageList) {
     'use strict';
     var billie_config_data = {};
     var billie_order_data = {};
@@ -73,6 +74,8 @@ define([
             var items = quote.getItems();
             var line_items = [];
 
+            var customerEmail = customer.isLoggedIn() ? customer.customerData.email : quote.guestEmail;
+
             for (var id in items) {
 
                 var item = items[id];
@@ -115,7 +118,7 @@ define([
                     "salutation": document.getElementById('payafterdelivery_gender').value,
                     "firstname": document.getElementById('payafterdelivery_firstname').value ? document.getElementById('payafterdelivery_firstname').value : billingAddress.firstname,
                     "lastname": document.getElementById('payafterdelivery_lastname').value ? document.getElementById('payafterdelivery_lastname').value : billingAddress.lastname,
-                    "email": quote.guestEmail
+                    "email": customerEmail
                 },
                 "line_items": line_items
             };
@@ -125,14 +128,14 @@ define([
             if (!this.validateForm('#payafterdelivery_billiepayment_form')) {
                 return;
             }
+            var customerEmail = customer.isLoggedIn() ? customer.customerData.email : quote.guestEmail;
             var self = this;
             var billingAddress = quote.billingAddress();
             var billie_order_data = this.setBillieConfigData();
-
             $.ajax({
                 url: '/billiepayment/token',
                 method: 'POST',
-                data: { merchant_name:  billingAddress.company},
+                data: { merchant_customer_id:  customerEmail},
                 showLoader: true,
                 success: function (data, messageContainer) {
                     billie_config_data = {

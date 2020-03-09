@@ -27,11 +27,11 @@ class Index extends Action
     public function execute()
     {
 
-        $merchantName = $this->_request->getParam('merchant_name');
+        $merchantCustomerId = $this->_request->getParam('merchant_customer_id');
 
         $client = $this->helper->clientCreate();
 
-        $billieResponse = $client->checkoutSessionCreate($merchantName);
+        $billieResponse = $client->checkoutSessionCreate($merchantCustomerId);
 
         $data = ['session_id' => $billieResponse];
         $result = $this->jsonResultFactory->create();
