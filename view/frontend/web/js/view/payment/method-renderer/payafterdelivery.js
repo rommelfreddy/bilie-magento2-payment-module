@@ -66,15 +66,25 @@ define([
             return true;
         },
 
+        spiltStreet: function(address) {
+            if(!address.street[1]) {
+                var street = address.street[0].split(/(\d+)/g);
+
+                address.street = [street[0], street[1] + street[2]];
+            }
+            return address
+        },
+
         setBillieConfigData: function () {
 
-            var billingAddress = quote.billingAddress();
-            var shippingAddress = quote.shippingAddress();
+            var billingAddress = this.spiltStreet(quote.billingAddress());
+            var shippingAddress = this.spiltStreet(quote.shippingAddress());
             var totals = quote.totals();
             var items = quote.getItems();
             var line_items = [];
 
             var customerEmail = customer.isLoggedIn() ? customer.customerData.email : quote.guestEmail;
+
 
             for (var id in items) {
 
@@ -132,6 +142,8 @@ define([
             var self = this;
             var billingAddress = quote.billingAddress();
             var billie_order_data = this.setBillieConfigData();
+
+
             $.ajax({
                 url: '/billiepayment/token',
                 method: 'POST',
