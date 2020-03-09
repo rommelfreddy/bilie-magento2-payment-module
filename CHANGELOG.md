@@ -5,7 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Use email address instead of company for merchan(ngongoll #5)
 
-## [0.1.1] - 2012.03.02
+
+## [0.1.5] - 2020.03.09
+### Fixed
+- split street if second address field is not set(ngongoll #6)
+- Use email address instead of company for merchant(ngongoll #5)
+
+## [0.1.0] - 2020.02.26
 ### Added
