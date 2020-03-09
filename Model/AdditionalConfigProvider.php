@@ -28,6 +28,7 @@ class AdditionalConfigProvider implements \Magento\Checkout\Model\ConfigProvider
     public function getConfig()
     {
         $output['billie_payment']['config']['duration'] = $this->scopeConfig->getValue('payment/payafterdelivery/duration');
+        $output['billie_payment']['config']['description'] = $this->scopeConfig->getValue('payment/payafterdelivery/description');
         return $output;
     }
 }
