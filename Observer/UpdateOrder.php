@@ -11,6 +11,7 @@ namespace Magento\BilliePaymentMethod\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 use \Magento\BilliePaymentMethod\Helper\Data;
+use \Magento\BilliePaymentMethod\Helper\Log;
 use \Magento\Framework\Exception\LocalizedException;
 use \Magento\Store\Model\StoreManagerInterface;
 use \Magento\Framework\Message\ManagerInterface;
@@ -23,10 +24,17 @@ class UpdateOrder implements ObserverInterface
 
     protected $storeManager;
     protected $messageManager;
+    protected $billieLogger;
 
-    public function __construct(Data $helper, \Magento\Framework\Message\ManagerInterface $messageManager,\Magento\Store\Model\StoreManagerInterface $storeManager, \Psr\Log\LoggerInterface $logger )
+    public function __construct(
+        Data $helper,
+        \Magento\BilliePaymentMethod\Helper\Log $billieLogger,
+        \Magento\Framework\Message\ManagerInterface $messageManager,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Psr\Log\LoggerInterface $logger)
     {
         $this->helper = $helper;
+        $this->billieLogger = $billieLogger;
         $this->_messageManager = $messageManager;
         $this->_storeManager = $storeManager;
         $this->logger = $logger;
@@ -39,44 +47,42 @@ class UpdateOrder implements ObserverInterface
         $order = $creditMemo->getOrder();
         $payment = $order->getPayment()->getMethodInstance();
 
-
-        if ($payment->getCode() == self::paymentmethodCode) {
+        if ($payment->getCode() != self::paymentmethodCode) {
             return;
         }
-
-         try {
+        try {
 
             $client = $this->helper->clientCreate();
 
-             if ($order->canCreditmemo()) {
+            if ($order->canCreditmemo()) {
 
-                 $billieUpdateData = $this->helper->reduceAmount($order);
-                 $billieResponse = $client->reduceOrderAmount($billieUpdateData);
+                $billieUpdateData = $this->helper->reduceAmount($order);
+                $billieResponse = $client->reduceOrderAmount($billieUpdateData);
 
-                 $this->logger->debug(print_r($billieResponse,true));
-//                 Mage::Helper('billie_core/log')->billieLog($order, $billieUpdateData, $billieResponse);
+                $this->billieLogger->billieLog($order, $billieUpdateData, $billieResponse);
 
-                 if ($billieResponse->state == 'complete') {
+                if ($billieResponse->state == 'complete') {
 
-                     $this->_messageManager->addNotice(Mage::Helper('billie_core')->__('This transaction is already closed, refunds with billie payment are not possible anymore'));
+                    $this->_messageManager->addNotice(Mage::Helper('billie_core')->__('This transaction is already closed, refunds with billie payment are not possible anymore'));
 
-                 } else {
+                } else {
 
-                     $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The amount for transaction with the id %1 was successfully reduced.', $order->getBillieReferenceId()));
-                     $order->save();
+                    $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The amount for transaction with the id %1 was successfully reduced.', $order->getBillieReferenceId()));
+                    $order->save();
 
-                 }
+                }
 
-             } else {
+            } else {
+                $billieCancelData = $this->helper->cancel($order);
+                $client->cancelOrder($billieCancelData);
 
-                 $billieCancelData = $this->helper->cancel($order);
-                 $billieResponse = $client->cancelOrder($billieCancelData);
+                $billieResponse = (object)['state' => 'canceled'];
+                $this->billieLogger->billieLog($order, $billieCancelData, $billieResponse);
 
-//                 Mage::Helper('billie_core/log')->billieLog($order, $billieCancelData, $billieResponse);
-                 $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
-                 $order->save();
+                $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
+                $order->save();
 
-             }
+            }
 
         } catch (Exception $error) {
 

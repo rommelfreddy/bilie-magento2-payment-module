@@ -3,31 +3,44 @@
 namespace Magento\BilliePaymentMethod\Helper;
 
 use \Magento\Framework\App\Helper\AbstractHelper;
+use \Magento\BilliePaymentMethod\Model\LogFactory;
 
 class Log extends AbstractHelper
 {
 
+    const sandboxMode = 'payment/payafterdelivery/sandbox';
+
+    protected $_billieLogger;
+    protected $helper;
+
+    public function __construct(
+        \Magento\BilliePaymentMethod\Model\LogFactory  $billieLogger,
+        \Magento\BilliePaymentMethod\Helper\Data $helper
+
+    ) {
+
+        $this->_billieLogger = $billieLogger;
+        $this->helper = $helper;
+    }
+
     public function billieLog($order, $request, $response)
     {
-
-        $log = $this->_objectManager->create('Magento\BilliePaymentMethod\Model\log');
+        $billieLogger = $this->_billieLogger->create();
 
         $logData = array(
 
             'store_id' => $order->getStoreId(),
             'order_id' => $order->getId(),
-            'reference_id' => $response->referenceId ? $response->referenceId : $order->getBillieReferenceId(),
+            'reference_id' => $order->getBillieReferenceId(),
             'transaction_tstamp' => time(),
             'created_at' => $order->getCreatedAt(),
             'customer_id' => $order->getCustomerId(),
             'billie_state' => $response->state,
-            'mode' => 'sandbox',
-//            'mode' => $this->helper->getMode() ? 'sandbox' : 'live',
-            'request' => serialize($request),
-            'billie_state' => $response->state
+            'mode' => $this->helper->getMode() ? 'sandbox' : 'live',
+            'request' => serialize($request)
         );
-        $log->setData($logData);
-        $log->save();
+        $billieLogger->addData($logData);
+        $billieLogger->save();
 
     }
 

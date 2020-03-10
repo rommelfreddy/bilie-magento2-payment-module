@@ -11,6 +11,7 @@ namespace Magento\BilliePaymentMethod\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 use \Magento\BilliePaymentMethod\Helper\Data;
+use \Magento\BilliePaymentMethod\Helper\Log;
 use \Magento\Framework\Exception\LocalizedException;
 
 class ShipOrder implements ObserverInterface
@@ -18,6 +19,17 @@ class ShipOrder implements ObserverInterface
 
     const paymentmethodCode = 'payafterdelivery';
     const duration = 'payment/payafterdelivery/duration';
+
+    protected $billieLogger;
+
+    public function __construct(
+        Data $helper,
+        \Magento\BilliePaymentMethod\Helper\Log $billieLogger
+    )
+    {
+        $this->helper = $helper;
+        $this->billieLogger = $billieLogger;
+    }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
@@ -46,20 +58,17 @@ class ShipOrder implements ObserverInterface
                 $client = $this->helper->clientCreate();
                 $billieResponse = $client->shipOrder($billieShipData);
 
-//                Mage::Helper('billie_core/log')->billieLog($order, $billieShipData, $billieResponse);
-                $order->addStatusHistoryComment(__('Billie PayAfterDelivery: shipping information was send for %1. The customer will be charged now', $billieResponse->referenceId));
+                $this->billieLogger->billieLog($order, $billieShipData, $billieResponse);
+                $order->addStatusHistoryComment(__('Billie PayAfterDelivery: shipping information was send for %1. The customer will be charged now', $order->getIncrementId()));
                 $order->save();
 
             } catch (Exception $error) {
 
+                $this->billieLogger->billieLog($order, $billieShipData, $billieResponse);
                 throw new LocalizedException(__($error->getMessage()));
 
             }
         }
 
-    }
-    public function __construct(Data $helper)
-    {
-        $this->helper = $helper;
     }
 }

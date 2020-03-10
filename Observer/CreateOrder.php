@@ -11,6 +11,7 @@ namespace Magento\BilliePaymentMethod\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 use \Magento\BilliePaymentMethod\Helper\Data;
+use \Magento\BilliePaymentMethod\Helper\Log;
 use \Magento\Framework\Exception\LocalizedException;
 use \Magento\Store\Model\StoreManagerInterface;
 use \Magento\Framework\Message\ManagerInterface;
@@ -24,14 +25,15 @@ class CreateOrder implements ObserverInterface
 
     protected $_storeManager;
     protected $_messageManager;
+    protected $billieLogger;
     protected $logger;
-    protected $logHelper;
 
     public function __construct(
         Data $helper,
         \Magento\BilliePaymentMethod\Helper\Log $logHelper,
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\BilliePaymentMethod\Helper\Log $billieLogger,
         \Psr\Log\LoggerInterface $logger
     )
     {
@@ -39,6 +41,7 @@ class CreateOrder implements ObserverInterface
         $this->logHelper = $logHelper;
         $this->_messageManager = $messageManager;
         $this->_storeManager = $storeManager;
+        $this->billieLogger = $billieLogger;
         $this->logger = $logger;
     }
 
@@ -58,31 +61,33 @@ class CreateOrder implements ObserverInterface
 
             $client = $this->helper->clientCreate();
 
-            $billieResponse = $client->checkoutSessionConfirm($billieSessionData);
+            $billieResponse = (object)$client->checkoutSessionConfirm($billieSessionData);
 
+            $order->setData('billie_reference_id', $billieResponse->uuid);
+            $order->addStatusHistoryComment(__('Billie PayAfterDelivery: payment accepted for %1', $billieResponse->uuid));
 
-            $order->setData('billie_reference_id', $billieResponse['uuid']);
-            $order->addStatusHistoryComment(__('Billie PayAfterDelivery: payment accepted for %1', $billieResponse['uuid']));
-
-            $payment->setData('billie_viban', $billieResponse['bank_account']['iban']);
-            $payment->setData('billie_vbic', $billieResponse['bank_account']['bic']);
+            $payment->setData('billie_viban', $billieResponse->bank_account['iban']);
+            $payment->setData('billie_vbic', $billieResponse->bank_account['bic']);
             $payment->setData('billie_duration', intval( $this->helper->getConfig(self::duration,$order->getStoreId())));
             $payment->setData('billie_company', $payment->getAdditionalInformation('company'));
 
             $order->save();
             $payment->save();
 
+            $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse);
+
+
         }catch (\Billie\Exception\BillieException $e){
             $errorMsg = __($e->getBillieCode());
 
-//            Mage::Helper('billie_core/log')->billieLog($order, $billieOrderData,$errorMsg );
+            $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse);
             throw new LocalizedException(__($errorMsg));
 
         }catch (\Billie\Exception\InvalidCommandException $e){
 
             $errorMsg = __($e->getViolations()['0']);
 
-//            Mage::Helper('billie_core/log')->billieLog($order, $billieOrderData,$errorMsg );
+            $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse);
             throw new LocalizedException(__($errorMsg));
 
         }
@@ -90,6 +95,11 @@ class CreateOrder implements ObserverInterface
             throw new LocalizedException(__($e->getMessage()));
 
         }
+
+        $billieUpdateData = $this->helper->updateOrder($order);
+        $billieUpdateResponse = $client->updateOrder($billieUpdateData);
+
+        $this->billieLogger->billieLog($order, $billieUpdateData, $billieUpdateResponse);
 
     }
 }

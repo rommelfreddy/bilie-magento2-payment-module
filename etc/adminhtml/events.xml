@@ -6,12 +6,12 @@
         <observer name="sales_order_shipment_after"
                   instance="Magento\BilliePaymentMethod\Observer\ShipOrder" />
     </event>
-    <event name="order_cancel_after">
-        <observer name="order_cancel_after"
+    <event name="sales_order_payment_cancel_creditmemo">
+        <observer name="sales_order_payment_cancel_creditmemo"
                   instance="Magento\BilliePaymentMethod\Observer\CancelOrder" />
     </event>
-    <event name="sales_order_creditmemo_save_after">
-        <observer name="sales_order_creditmemo_save_after"
+    <event name="sales_order_payment_refund">
+        <observer name="sales_order_payment_refund"
                   instance="Magento\BilliePaymentMethod\Observer\UpdateOrder" />
     </event>
 </config>

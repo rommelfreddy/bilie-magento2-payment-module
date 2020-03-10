@@ -11,6 +11,7 @@ namespace Magento\BilliePaymentMethod\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 use \Magento\BilliePaymentMethod\Helper\Data;
+use \Magento\BilliePaymentMethod\Helper\Log;
 use \Magento\Framework\Exception\LocalizedException;
 use \Magento\Store\Model\StoreManagerInterface;
 
@@ -20,10 +21,16 @@ class CancelOrder implements ObserverInterface
     const paymentmethodCode = 'payafterdelivery';
 
     protected $storeManager;
+    protected $billieLogger;
 
-    public function __construct(Data $helper, \Magento\Store\Model\StoreManagerInterface $storeManager )
+    public function __construct(
+        Data $helper,
+        \Magento\BilliePaymentMethod\Helper\Log $billieLogger,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
+    )
     {
         $this->helper = $helper;
+        $this->billieLogger = $billieLogger;
         $this->_storeManager = $storeManager;
     }
 
@@ -31,12 +38,11 @@ class CancelOrder implements ObserverInterface
     {
         $order = $observer->getEvent()->getOrder();
 
-//        $order->setData('billie_reference_id','13703b10-e2a2-4d77-becc-7880d30c564b');
         $payment = $order->getPayment()->getMethodInstance();
 
         /** @var \Magento\Sales\Model\Order $order */
 
-        if ($payment->getCode() == self::paymentmethodCode) {
+        if ($payment->getCode() != self::paymentmethodCode) {
             return;
         }
 
@@ -45,9 +51,10 @@ class CancelOrder implements ObserverInterface
             $client = $this->helper->clientCreate();
 
             $billieCancelData = $this->helper->cancel($order);
-            $billieResponse = $client->cancelOrder($billieCancelData);
+            $client->cancelOrder($billieCancelData);
 
-//             Mage::Helper('billie_core/log')->billieLog($order, $billieCancelData, $billieResponse);
+            $billieResponse = (object) ['state' => 'canceled'];
+            $this->billieLogger->billieLog($order, $billieCancelData, $billieResponse);
             $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
             $order->save();
 
