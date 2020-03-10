@@ -2,6 +2,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="Magento_BilliePaymentMethod" title="Billie Payment" module="Magento_BilliePaymentMethod" sortOrder="20" dependsOnModule="Magento_BilliePaymentMethod" resource="Magento_BilliePaymentMethod::log"/>
-        <add id="Magento_BilliePaymentMethod::index" title="Billie Payment Log" module="Magento_BilliePaymentMethod" action="billie/log/index" parent="Magento_BilliePaymentMethod" sortOrder="20" dependsOnModule="Magento_BilliePaymentMethod" resource="Magento_BilliePaymentMethod::log"/>
+        <add id="Magento_BilliePaymentMethod::index" title="Billie Payment Log" module="Magento_BilliePaymentMethod" action="billie/log/index" parent="Magento_BilliePaymentMethod" sortOrder="20" resource="Magento_BilliePaymentMethod::Log"/>
     </menu>
 </config>

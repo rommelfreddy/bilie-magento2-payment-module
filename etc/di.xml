@@ -5,14 +5,14 @@
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
-                <item name="magento_billiepaymentmethod_log_listing_data_source" xsi:type="string">Magento\BilliePaymentMethod\ResourceModel\Log\Collection</item>
+                <item name="log_listing_data_source" xsi:type="string">Magento\BilliePaymentMethod\Model\ResourceModel\Log\Grid\Collection</item>
             </argument>
         </arguments>
     </type>
-    <virtualType name="Magento\BilliePaymentMethod\ResourceModel\Log\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+    <virtualType name="Magento\BilliePaymentMethod\Model\ResourceModel\Log\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">billie_transaction_log</argument>
-            <argument name="resourceModel" xsi:type="string">Magento\BilliePaymentMethod\ResourceModel\Log</argument>
+            <argument name="resourceModel" xsi:type="string">Magento\BilliePaymentMethod\Model\ResourceModel\Log</argument>
         </arguments>
     </virtualType>
 
