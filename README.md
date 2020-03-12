@@ -22,7 +22,7 @@ Go to your installation directory of Magento 2 and perform the following command
 
 
 `composer config repositories.billie git git@github.com:ozean12/billie-shop-plugin-sdk.git`<br>
-`composer require billie/api-php-sdk:feature/oauth2`<br>
+`composer require billie/api-php-sdk:dev-feature/oauth2`<br>
 
 Clear Magento Caches and login again<br/>
 `php bin/magento setup:upgrade`<br>

@@ -37,7 +37,7 @@ class Log extends AbstractHelper
             'customer_id' => $order->getCustomerId(),
             'billie_state' => $response->state,
             'mode' => $this->helper->getMode() ? 'sandbox' : 'live',
-            'request' => serialize($request)
+            'request' => json_encode($request)
         );
         $billieLogger->addData($logData);
         $billieLogger->save();

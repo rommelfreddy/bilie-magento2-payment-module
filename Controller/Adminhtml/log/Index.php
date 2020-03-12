@@ -32,7 +32,7 @@ class Index extends \Magento\Backend\App\Action
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->setActiveMenu('Magento_BilliePaymentMethod::index')
-            ->getConfig()->getTitle()->prepend(__('Faqs'));
+            ->getConfig()->getTitle()->prepend(__('Billie Logs'));
         return $resultPage;
     }
 
