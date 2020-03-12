@@ -120,7 +120,7 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
             $order = $info->getOrder();
             $shipping = $order->getShipmentsCollection()->getFirstItem();
             $date = strtotime($shipping->getCreatedAt());
-            $newDate = date('d.m.Y', strtotime( $this->getConfig('payment/magento_billiePaymentMethod/duration') . " day", $date));
+            $newDate = date('d.m.Y', strtotime( $this->getConfig('payment/payafterdelivery/duration') . " day", $date));
 
             $duration = $newDate;
 

@@ -122,7 +122,7 @@ class Data extends AbstractHelper
     public function updateOrder($order)
     {
         $command = new \Billie\Command\UpdateOrder($order->getBillieReferenceId());
-        $command->order_id = $order->getIncrementId();
+        $command->orderId = $order->getIncrementId();
 
         return $command;
     }

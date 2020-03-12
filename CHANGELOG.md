@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2020.03.12
+### Fixed
+- fix updateOrder call after sessionConfirm (ngongoll #8)
+- logging response as json (ngongoll #11)
+- fix creditmemo (ngongoll #10)
+- fix wrong config path (ngongoll #9)
 
 ## [0.1.5] - 2020.03.09
 ### Fixed
