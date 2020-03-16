@@ -28,6 +28,7 @@
 "The input must be numeric only","Bitte geben Sie einen numerischen Wert an"
 "This transaction is already closed, refunds with billie payment are not possible anymore","Die Bestellung ist bereits abgeschlossen. Es können keine Äderungen mehr vorgenommen werden"
 "Url to invoice document folder","Url to invoice document folder"
+"Usage","Verwendungszweck"
 "VAT ID","Umsatzsteuer ID"
 "VBIC","BIC"
 "VIBAN","IBAN"

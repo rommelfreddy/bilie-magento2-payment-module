@@ -50,30 +50,30 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
          }*/
 
         if ($this->isAdmin()) {
-            $data['Account owner'] = $this->getStoreName();
+            $data[(string)__('Account owner')] = $this->getStoreName();
         }
         if ($oInfo->getBillieViban()) {
-            $data['VIBAN'] = $oInfo->getBillieViban();
+            $data[(string)__('VIBAN')] = $oInfo->getBillieViban();
         }
         if ($oInfo->getBillieVbic()) {
-            $data['VBIC'] = $oInfo->getBillieVbic();
+            $data[(string)__('VBIC')] = $oInfo->getBillieVbic();
         }
         if ($this->getInfo()->getBillieVbic()) {
             $bankaccount = $this->helper->getBankAccountByBic($this->getInfo()->getBillieVbic());
-            $data['Bank'] = $bankaccount['label'];
+            $data[(string)__('Bank')] = $bankaccount['label'];
         }
         if ($oInfo->getBillieDuration() && $this->isAdmin()) {
-            $data['Duration'] = $this->getDuration();
+            $data[(string)__('Duration')] = $this->getDuration();
         }
         $invoiceIncrementId = $this->getInvoiceIncrementId($oInfo->getOrder());
         if ($oInfo->getBillieViban() && $invoiceIncrementId) {
-            $data['Usage'] = $invoiceIncrementId;
+            $data[(string)__('Usage')] = $invoiceIncrementId;
         }
         if ($oInfo->getBillieRegistrationNumber() && !$this->isAdmin()) {
-            $data['Registration Number'] = $oInfo->getBillieRegistrationNumber();
+            $data[(string)__('Registration Number')] = $oInfo->getBillieRegistrationNumber();
         }
         if ($oInfo->getBillieTaxId() && !$this->isAdmin()) {
-            $data['VAT ID'] = $oInfo->getBillieTaxId();
+            $data[(string)__('VAT ID')] = $oInfo->getBillieTaxId();
         }
 
 

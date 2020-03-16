@@ -1,6 +1,6 @@
 <?php
 
-namespace Magento\BilliePaymentMethod\Model\ResourceModel\Contact;
+namespace Magento\BilliePaymentMethod\Model\ResourceModel\log;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
