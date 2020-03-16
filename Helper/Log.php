@@ -32,7 +32,7 @@ class Log extends AbstractHelper
             'store_id' => $order->getStoreId(),
             'order_id' => $order->getId(),
             'reference_id' => $order->getBillieReferenceId(),
-            'transaction_tstamp' => time(),
+            'transaction_tstamp' => date('Y-m-d H:i:s',time()),
             'created_at' => $order->getCreatedAt(),
             'customer_id' => $order->getCustomerId(),
             'billie_state' => $response->state,
