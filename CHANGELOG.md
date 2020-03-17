@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2020.03.17
+### Fixed
+- translation in invoice pdf (ngongoll #12)
+- use response data for billing address (ngongoll #13)
+- use transaction timestamp for log grid (ngongoll #14)
+
 ## [0.1.6] - 2020.03.12
 ### Fixed
 - fix updateOrder call after sessionConfirm (ngongoll #8)
