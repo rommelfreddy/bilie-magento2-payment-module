@@ -63,13 +63,23 @@ class CreateOrder implements ObserverInterface
 
             $billieResponse = (object)$client->checkoutSessionConfirm($billieSessionData);
 
+//            $this->logger->debug(print_r($billieResponse->debtor_company,true));
+
             $order->setData('billie_reference_id', $billieResponse->uuid);
-            $order->addStatusHistoryComment(__('Billie PayAfterDelivery: payment accepted for %1', $billieResponse->uuid));
+
+            $billingAddress = $order->getBillingaddress();
+            $billingAddress->setData('company', $billieResponse->debtor_company['name']);;
+            $billingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);;
+            $billingAddress->setData('postcode', $billieResponse->debtor_company['address_postal_code']);
+            $billingAddress->setData('city', $billieResponse->debtor_company['address_city']);
+            $billingAddress->setData('country_id', $billieResponse->debtor_company['address_country']);
 
             $payment->setData('billie_viban', $billieResponse->bank_account['iban']);
             $payment->setData('billie_vbic', $billieResponse->bank_account['bic']);
             $payment->setData('billie_duration', intval( $this->helper->getConfig(self::duration,$order->getStoreId())));
             $payment->setData('billie_company', $payment->getAdditionalInformation('company'));
+
+            $order->addStatusHistoryComment(__('Billie PayAfterDelivery: payment accepted for %1', $billieResponse->uuid));
 
             $order->save();
             $payment->save();
