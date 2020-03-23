@@ -47,7 +47,7 @@ class UpdateOrder implements ObserverInterface
         $order = $creditMemo->getOrder();
         $payment = $order->getPayment()->getMethodInstance();
 
-        if ($payment->getCode() != self::paymentmethodCode) {
+        if ($payment->getCode() != self::paymentmethodCode || $order->canShip()) {
             return;
         }
         try {
