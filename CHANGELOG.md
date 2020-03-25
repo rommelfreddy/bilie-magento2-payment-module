@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8] - 2020.03.25
+### Fixed
+- change field size for request in log table (ngongoll)
+
 ## [0.1.7] - 2020.03.17
 ### Fixed
 - translation in invoice pdf (ngongoll #12)
