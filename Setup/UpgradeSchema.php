@@ -159,6 +159,20 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     'comment' => 'billie_salutation'
                 ]
             );
+
+        $tableName = $setup->getTable('billie_transaction_log');
+        if (version_compare($context->getVersion(), '0.1.8', '<')) {
+            $setup->getConnection()->changeColumn(
+                $setup->getTable($tableName),
+                'request',
+                'request',
+                [
+                    'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                    'length' => 64000
+                ]
+            );
+        }
+
         $setup->endSetup();
     }
 }
