@@ -60,10 +60,7 @@ class CreateOrder implements ObserverInterface
             // initialize Billie Client
 
             $client = $this->helper->clientCreate();
-
             $billieResponse = (object)$client->checkoutSessionConfirm($billieSessionData);
-
-//            $this->logger->debug(print_r($billieResponse->debtor_company,true));
 
             $order->setData('billie_reference_id', $billieResponse->uuid);
 
@@ -90,7 +87,7 @@ class CreateOrder implements ObserverInterface
         }catch (\Billie\Exception\BillieException $e){
             $errorMsg = __($e->getBillieCode());
 
-            $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse);
+            //$this->billieLogger->billieLog($order, $billieSessionData, $errorMsg);
             throw new LocalizedException(__($errorMsg));
 
         }catch (\Billie\Exception\InvalidCommandException $e){
@@ -105,11 +102,11 @@ class CreateOrder implements ObserverInterface
             throw new LocalizedException(__($e->getMessage()));
 
         }
-
-        $billieUpdateData = $this->helper->updateOrder($order);
-        $billieUpdateResponse = $client->updateOrder($billieUpdateData);
-
-        $this->billieLogger->billieLog($order, $billieUpdateData, $billieUpdateResponse);
+//
+//        $billieUpdateData = $this->helper->updateOrder($order);
+//        $billieUpdateResponse = $client->updateOrder($billieUpdateData);
+//
+//        $this->billieLogger->billieLog($order, $billieUpdateData, $billieUpdateResponse);
 
     }
 }

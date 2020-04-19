@@ -43,36 +43,48 @@ class UpdateOrder implements ObserverInterface
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
 
+            $this->logger->debug('creditmemo');
+//            $this->logger->debug(print_r($billieResponse->debtor_company,true));
         $creditMemo = $observer->getEvent()->getCreditmemo();
         $order = $creditMemo->getOrder();
         $payment = $order->getPayment()->getMethodInstance();
 
         if ($payment->getCode() != self::paymentmethodCode) {
+
+            $this->logger->debug('creditmemo '.$payment->getCode());
             return;
         }
+        $this->logger->debug('creditmemo2');
         try {
 
             $client = $this->helper->clientCreate();
 
+            $this->logger->debug('can creditmemo '. $order->canCreditmemo());
             if ($order->canCreditmemo()) {
 
+                $this->logger->debug('can creditmemo');
                 $billieUpdateData = $this->helper->reduceAmount($order);
                 $billieResponse = $client->reduceOrderAmount($billieUpdateData);
 
+                $this->logger->debug('can creditmemo2');
                 $this->billieLogger->billieLog($order, $billieUpdateData, $billieResponse);
 
                 if ($billieResponse->state == 'complete') {
 
+                    $this->logger->debug('can creditmemo3');
                     $this->_messageManager->addNotice(Mage::Helper('billie_core')->__('This transaction is already closed, refunds with billie payment are not possible anymore'));
 
                 } else {
 
+                    $this->logger->debug('can creditmemo4');
                     $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The amount for transaction with the id %1 was successfully reduced.', $order->getBillieReferenceId()));
                     $order->save();
 
                 }
 
+                $this->logger->debug('can creditmemo5');
             } else {
+                $this->logger->debug('cant creditmemo');
                 $billieCancelData = $this->helper->cancel($order);
                 $client->cancelOrder($billieCancelData);
 
@@ -86,6 +98,7 @@ class UpdateOrder implements ObserverInterface
 
         } catch (Exception $error) {
 
+            $this->logger->debug(print_r($error,true));
             throw new LocalizedException(__($error->getMessage()));
 
         }

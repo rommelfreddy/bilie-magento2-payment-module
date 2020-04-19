@@ -47,24 +47,23 @@ class Data extends AbstractHelper
 
     }
 
-
     public function sessionConfirmOrder($order){
 
-
-        $billingAddress = $order->getBillingAddress();
         $payment = $order->getPayment();
+        $widgetResObj = json_decode($payment->getAdditionalInformation('widget_res'));
 
-        $command = new \Billie\Command\CheckoutSessionConfirm($order->getPayment()->getAdditionalInformation('token'));
+        $command = new \Billie\Command\CheckoutSessionConfirm($payment->getAdditionalInformation('token'));
+
         $command->duration = intval( $this->getConfig(self::duration,$this->getStoreId()) );
 
         // Company information
         $command->debtorCompany = new \Billie\Model\DebtorCompany();
-        $command->debtorCompany->name = $payment->getBillieCompany()?$payment->getBillieCompany():$billingAddress->getCompany();
-        $command->debtorCompany->addressStreet = $billingAddress->getStreet()[0];
-        $command->debtorCompany->addressCity = $billingAddress->getCity();
-        $command->debtorCompany->addressPostalCode = $billingAddress->getPostcode();
-        $command->debtorCompany->addressCountry = $billingAddress->getCountryId();
-        $command->debtorCompany->addressHouseNumber = $billingAddress->getStreet()[1];
+        $command->debtorCompany->name = $widgetResObj->name;
+        $command->debtorCompany->addressStreet = $widgetResObj->address_street;
+        $command->debtorCompany->addressCity = $widgetResObj->address_city;
+        $command->debtorCompany->addressPostalCode = $widgetResObj->address_postal_code;
+        $command->debtorCompany->addressCountry = $widgetResObj->address_country;
+        $command->debtorCompany->addressHouseNumber = $widgetResObj->address_house_number;
 
 
         $command->amount = new \Billie\Model\Amount(($order->getBaseGrandTotal() - $order->getBaseTaxAmount())*100, $order->getGlobalCurrencyCode(), $order->getBaseTaxAmount()*100); // amounts are in cent!
@@ -132,8 +131,10 @@ class Data extends AbstractHelper
         $command = new \Billie\Command\ReduceOrderAmount($order->getBillieReferenceId());
         $newTotalAmount = $order->getData('base_total_invoiced') - $order->getData('base_total_offline_refunded') - $order->getData('base_total_online_refunded');
         $newTaxAmount = $order->getData('base_tax_invoiced') - $order->getData('base_tax_refunded');
-//        $command->invoiceNumber = $order->getInvoiceCollection()->getFirstItem()->getIncrementId();
-//        $command->invoiceUrl = $this->getConfig(self::invoiceUrl,$this->getStoreId()).'/'.$order->getIncrementId().'.pdf';
+        if($order->hasShipments()){
+            $command->invoiceNumber = $order->getInvoiceCollection()->getFirstItem()->getIncrementId();
+            $command->invoiceUrl = $this->getConfig(self::invoiceUrl,$this->getStoreId()).'/'.$order->getIncrementId().'.pdf';
+        }
         $command->amount = new \Billie\Model\Amount(($newTotalAmount-$newTaxAmount)*100, $order->getData('base_currency_code'), $newTaxAmount*100);
 
         return $command;

@@ -16,13 +16,15 @@ class AssignData extends AbstractDataAssignObserver
 {
     const TOKEN = 'token';
     const COMPANY = 'company';
+    const WIDGET_RES = 'widget_res';
 
     /**
      * @var array
      */
     protected $additionalInformationList = [
         self::TOKEN,
-        self::COMPANY
+        self::COMPANY,
+        self::WIDGET_RES
     ];
 
     /**

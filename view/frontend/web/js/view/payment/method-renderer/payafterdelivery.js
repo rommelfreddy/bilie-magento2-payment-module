@@ -39,6 +39,7 @@ define([
                 'additional_data': {
                     'company': $('#payafterdelivery_company').val(),
                     'token': $('#payafterdelivery_token').val(),
+                    'widget_res': $('#payafterdelivery_widget_res').val(),
                 }
             };
         },
@@ -162,7 +163,8 @@ define([
                         billie_order_data: billie_order_data
                     })
                         .then(function success(ao) {
-
+                            $('#payafterdelivery_widget_res').val(JSON.stringify(ao.debtor_company));
+                            console.log(ao.debtor_company);
                             self.placeOrder();
                         })
                         .catch(function failure(err) {
