@@ -6,7 +6,6 @@ namespace Magento\BilliePaymentMethod\Model\ResourceModel\Log\Grid;
 use Magento\Framework\Api\Search\SearchResultInterface;
 use Magento\Framework\Search\AggregationInterface;
 use Magento\BilliePaymentMethod\Model\ResourceModel\Log\Collection as LogCollection;
-//use MageDirect\Faq\Model\ResourceModel\Log\Collection as LogCollection;
 
 class Collection extends LogCollection implements SearchResultInterface
 {
@@ -17,7 +16,6 @@ class Collection extends LogCollection implements SearchResultInterface
 
     /**
      * @param \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory
-     * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param string $mainTable
@@ -32,7 +30,6 @@ class Collection extends LogCollection implements SearchResultInterface
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
-        \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         $mainTable,
@@ -45,7 +42,7 @@ class Collection extends LogCollection implements SearchResultInterface
     ) {
         parent::__construct(
             $entityFactory,
-            $logger,
+//            $logger,
             $fetchStrategy,
             $eventManager,
             $connection,

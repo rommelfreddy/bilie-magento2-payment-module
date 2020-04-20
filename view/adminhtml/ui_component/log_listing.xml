@@ -18,7 +18,7 @@
             </storageConfig>
             <updateUrl path="mui/index/render"/>
         </settings>
-        <aclResource>MageDirect_Faq::faq</aclResource>
+        <aclResource>Magento_BilliePaymentMethod::log</aclResource>
         <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="log_listing_data_source">
             <settings>
                 <requestFieldName>id</requestFieldName>
