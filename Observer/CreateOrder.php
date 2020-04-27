@@ -28,6 +28,8 @@ class CreateOrder implements ObserverInterface
     protected $billieLogger;
     protected $logger;
 
+
+
     public function __construct(
         Data $helper,
         \Magento\BilliePaymentMethod\Helper\Log $logHelper,
@@ -64,12 +66,23 @@ class CreateOrder implements ObserverInterface
 
             $order->setData('billie_reference_id', $billieResponse->uuid);
 
+            if($this->compareAddress($order)){
+
+                $shippingAddress = $order->getShippingaddress();
+                $shippingAddress->setData('company', $billieResponse->debtor_company['name']);;
+                $shippingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);;
+                $shippingAddress->setData('postcode', $billieResponse->debtor_company['address_postal_code']);
+                $shippingAddress->setData('city', $billieResponse->debtor_company['address_city']);
+                $shippingAddress->setData('country_id', $billieResponse->debtor_company['address_country']);
+
+            }
             $billingAddress = $order->getBillingaddress();
             $billingAddress->setData('company', $billieResponse->debtor_company['name']);;
             $billingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);;
             $billingAddress->setData('postcode', $billieResponse->debtor_company['address_postal_code']);
             $billingAddress->setData('city', $billieResponse->debtor_company['address_city']);
             $billingAddress->setData('country_id', $billieResponse->debtor_company['address_country']);
+
 
             $payment->setData('billie_viban', $billieResponse->bank_account['iban']);
             $payment->setData('billie_vbic', $billieResponse->bank_account['bic']);
@@ -102,11 +115,21 @@ class CreateOrder implements ObserverInterface
             throw new LocalizedException(__($e->getMessage()));
 
         }
-//
-//        $billieUpdateData = $this->helper->updateOrder($order);
-//        $billieUpdateResponse = $client->updateOrder($billieUpdateData);
-//
-//        $this->billieLogger->billieLog($order, $billieUpdateData, $billieUpdateResponse);
 
+    }
+    public function compareAddress($order) {
+        $sA = $order->getShippingaddress()->getData();
+        $bA = $order->getBillingaddress()->getData();
+        $useA = array('company','street','city','postcode','country_id');
+        $same = true;
+        foreach($useA as $key){
+
+            if($sA[$key] != $bA[$key]){
+                $same = false;
+                break;
+            }
+
+        }
+        return $same;
     }
 }

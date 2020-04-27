@@ -134,6 +134,8 @@ class Data extends AbstractHelper
         if($order->hasShipments()){
             $command->invoiceNumber = $order->getInvoiceCollection()->getFirstItem()->getIncrementId();
             $command->invoiceUrl = $this->getConfig(self::invoiceUrl,$this->getStoreId()).'/'.$order->getIncrementId().'.pdf';
+        } else {
+            $command->orderId = $order->getIncrementId();
         }
         $command->amount = new \Billie\Model\Amount(($newTotalAmount-$newTaxAmount)*100, $order->getData('base_currency_code'), $newTaxAmount*100);
 
