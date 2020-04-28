@@ -47,6 +47,10 @@ class CreateOrder implements ObserverInterface
         $this->logger = $logger;
     }
 
+    /**
+     * @param \Magento\Framework\Event\Observer $observer
+     *
+     */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
 
@@ -62,8 +66,9 @@ class CreateOrder implements ObserverInterface
             // initialize Billie Client
 
             $client = $this->helper->clientCreate();
-            $billieResponse = (object)$client->checkoutSessionConfirm($billieSessionData);
+            $this->logger->debug(print_r($billieSessionData,true));
 
+            $billieResponse = (object)$client->checkoutSessionConfirm($billieSessionData);
             $order->setData('billie_reference_id', $billieResponse->uuid);
 
             if($this->compareAddress($order)){
@@ -83,7 +88,6 @@ class CreateOrder implements ObserverInterface
             $billingAddress->setData('city', $billieResponse->debtor_company['address_city']);
             $billingAddress->setData('country_id', $billieResponse->debtor_company['address_country']);
 
-
             $payment->setData('billie_viban', $billieResponse->bank_account['iban']);
             $payment->setData('billie_vbic', $billieResponse->bank_account['bic']);
             $payment->setData('billie_duration', intval( $this->helper->getConfig(self::duration,$order->getStoreId())));
@@ -93,6 +97,10 @@ class CreateOrder implements ObserverInterface
 
             $order->save();
             $payment->save();
+
+            //updateOrder for submit order_id
+            $billieUpdateData = $this->helper->updateOrder($order);
+            $billieResponse = $client->updateOrder($billieUpdateData);
 
             $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse);
 
@@ -117,6 +125,11 @@ class CreateOrder implements ObserverInterface
         }
 
     }
+
+    /**
+     * @param $order
+     * @return bool
+     */
     public function compareAddress($order) {
         $sA = $order->getShippingaddress()->getData();
         $bA = $order->getBillingaddress()->getData();

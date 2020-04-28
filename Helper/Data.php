@@ -65,7 +65,6 @@ class Data extends AbstractHelper
         $command->debtorCompany->addressCountry = $widgetResObj->address_country;
         $command->debtorCompany->addressHouseNumber = $widgetResObj->address_house_number;
 
-
         $command->amount = new \Billie\Model\Amount(($order->getBaseGrandTotal() - $order->getBaseTaxAmount())*100, $order->getGlobalCurrencyCode(), $order->getBaseTaxAmount()*100); // amounts are in cent!
 
         return $command;
@@ -134,8 +133,6 @@ class Data extends AbstractHelper
         if($order->hasShipments()){
             $command->invoiceNumber = $order->getInvoiceCollection()->getFirstItem()->getIncrementId();
             $command->invoiceUrl = $this->getConfig(self::invoiceUrl,$this->getStoreId()).'/'.$order->getIncrementId().'.pdf';
-        } else {
-            $command->orderId = $order->getIncrementId();
         }
         $command->amount = new \Billie\Model\Amount(($newTotalAmount-$newTaxAmount)*100, $order->getData('base_currency_code'), $newTaxAmount*100);
 

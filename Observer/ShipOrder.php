@@ -33,7 +33,6 @@ class ShipOrder implements ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $submitOrderId = false;
         $shipment = $observer->getEvent()->getShipment();
 
         $order = $shipment->getOrder();
@@ -57,11 +56,7 @@ class ShipOrder implements ObserverInterface
 
                 $billieShipData = $this->helper->mapShipOrderData($order);
                 $client = $this->helper->clientCreate();
-
-                if($order->getCreditmemosCollection()->count() == 0 ){
-                    $submitOrderId = true;
-                }
-                $billieResponse = $client->shipOrder($billieShipData,$submitOrderId);
+                $billieResponse = $client->shipOrder($billieShipData);
                 $this->billieLogger->billieLog($order, $billieShipData, $billieResponse);
                 $order->addStatusHistoryComment(__('Billie PayAfterDelivery: shipping information was send for %1. The customer will be charged now', $order->getIncrementId()));
                 $order->save();
