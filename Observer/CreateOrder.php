@@ -56,7 +56,7 @@ class CreateOrder implements ObserverInterface
 
         $order = $observer->getEvent()->getOrder();
         $payment = $order->getPayment();
-        if ($payment->getCode() == self::paymentmethodCode) {
+        if ($payment->getCode() != self::paymentmethodCode) {
             return;
         }
         $this->helper->setStoreId($order->getStoreId());
@@ -74,8 +74,8 @@ class CreateOrder implements ObserverInterface
             if($this->compareAddress($order)){
 
                 $shippingAddress = $order->getShippingaddress();
-                $shippingAddress->setData('company', $billieResponse->debtor_company['name']);;
-                $shippingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);;
+                $shippingAddress->setData('company', $billieResponse->debtor_company['name']);
+                $shippingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);
                 $shippingAddress->setData('postcode', $billieResponse->debtor_company['address_postal_code']);
                 $shippingAddress->setData('city', $billieResponse->debtor_company['address_city']);
                 $shippingAddress->setData('country_id', $billieResponse->debtor_company['address_country']);
@@ -83,7 +83,7 @@ class CreateOrder implements ObserverInterface
             }
             $billingAddress = $order->getBillingaddress();
             $billingAddress->setData('company', $billieResponse->debtor_company['name']);;
-            $billingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);;
+            $billingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);
             $billingAddress->setData('postcode', $billieResponse->debtor_company['address_postal_code']);
             $billingAddress->setData('city', $billieResponse->debtor_company['address_city']);
             $billingAddress->setData('country_id', $billieResponse->debtor_company['address_country']);

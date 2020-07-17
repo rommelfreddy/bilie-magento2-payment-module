@@ -12,7 +12,7 @@ class Data extends AbstractHelper
     const duration = 'payment/payafterdelivery/duration';
     const housenumberField = 'billie_core/config/housenumber';
     const invoiceUrl = 'billie_core/config/invoice_url';
-
+    const paymentmethodCode = 'payafterdelivery';
 
     /** @var mixed */
     protected $storeId = null;
@@ -49,6 +49,10 @@ class Data extends AbstractHelper
 
     public function sessionConfirmOrder($order){
 
+        $payment = $order->getPayment();
+        if ($payment->getCode() != self::paymentmethodCode) {
+            return;
+        }
         $payment = $order->getPayment();
         $widgetResObj = json_decode($payment->getAdditionalInformation('widget_res'));
 
