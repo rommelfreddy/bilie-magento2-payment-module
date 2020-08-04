@@ -11,7 +11,7 @@
                 <title>Billie Rechnungskauf</title>
                 <description>Bezahlen Sie bequem und sicher auf Rechnung - innerhalb von {Zahlungsziel} Tagen nach Erhalt der Ware.</description>
                 <allowspecific>0</allowspecific>
-                <group>Offline</group>
+                <group>offline</group>
                 <can_use_internal>1</can_use_internal>
                 <consumer_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
                 <consumer_secret_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
