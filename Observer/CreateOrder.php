@@ -56,7 +56,8 @@ class CreateOrder implements ObserverInterface
 
         $order = $observer->getEvent()->getOrder();
         $payment = $order->getPayment();
-        if ($payment->getCode() != self::paymentmethodCode) {
+
+        if ($payment->getCode() != self::paymentmethodCode && $payment->getMethod() != self::paymentmethodCode) {
             return;
         }
         $this->helper->setStoreId($order->getStoreId());

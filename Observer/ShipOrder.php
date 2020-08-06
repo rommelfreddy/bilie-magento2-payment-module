@@ -40,7 +40,7 @@ class ShipOrder implements ObserverInterface
 
         /** @var \Magento\Sales\Model\Order $order */
 
-        if ($payment->getCode() != self::paymentmethodCode) {
+        if ($payment->getCode() != self::paymentmethodCode && $payment->getMethod() != self::paymentmethodCode) {
             return;
         }
 
