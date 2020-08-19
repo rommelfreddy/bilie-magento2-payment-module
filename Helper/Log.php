@@ -1,9 +1,9 @@
 <?php
 
-namespace Magento\BilliePaymentMethod\Helper;
+namespace Billiepayment\BilliePaymentMethod\Helper;
 
 use \Magento\Framework\App\Helper\AbstractHelper;
-use \Magento\BilliePaymentMethod\Model\LogFactory;
+use \Billiepayment\BilliePaymentMethod\Model\LogFactory;
 
 class Log extends AbstractHelper
 {
@@ -14,8 +14,8 @@ class Log extends AbstractHelper
     protected $helper;
 
     public function __construct(
-        \Magento\BilliePaymentMethod\Model\LogFactory  $billieLogger,
-        \Magento\BilliePaymentMethod\Helper\Data $helper
+        \Billiepayment\BilliePaymentMethod\Model\LogFactory  $billieLogger,
+        \Billiepayment\BilliePaymentMethod\Helper\Data $helper
 
     ) {
 

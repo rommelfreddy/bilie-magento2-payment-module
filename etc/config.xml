@@ -5,7 +5,7 @@
         <payment>
             <payafterdelivery>
                 <active>1</active>
-                <model>Magento\BilliePaymentMethod\Model\Payment\Payafterdelivery</model>
+                <model>Billiepayment\BilliePaymentMethod\Model\Payment\Payafterdelivery</model>
                 <order_status>pending</order_status>
                 <payment_action>true</payment_action>
                 <title>Billie Rechnungskauf</title>

@@ -3,9 +3,9 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="sales_order_place_before">
-        <observer name="sales_order_place_before" instance="Magento\BilliePaymentMethod\Observer\CreateOrder"/>
+        <observer name="sales_order_place_before" instance="Billiepayment\BilliePaymentMethod\Observer\CreateOrder"/>
     </event>
     <event name="payment_method_assign_data_payafterdelivery">
-        <observer name="payafterdelivery_payment_gateway_data_assign"  instance="Magento\BilliePaymentMethod\Observer\AssignData" />
+        <observer name="payafterdelivery_payment_gateway_data_assign"  instance="Billiepayment\BilliePaymentMethod\Observer\AssignData" />
     </event>
 </config    >

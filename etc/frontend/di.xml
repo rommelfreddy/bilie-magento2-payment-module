@@ -2,7 +2,7 @@
     <type name="Magento\Checkout\Model\CompositeConfigProvider">
         <arguments>
             <argument name="configProviders" xsi:type="array">
-                <item name="additional_provider" xsi:type="object">Magento\BilliePaymentMethod\Model\AdditionalConfigProvider</item>
+                <item name="additional_provider" xsi:type="object">Billiepayment\BilliePaymentMethod\Model\AdditionalConfigProvider</item>
             </argument>
         </arguments>
     </type>

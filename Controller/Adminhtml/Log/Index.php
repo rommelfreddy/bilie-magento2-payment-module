@@ -1,6 +1,6 @@
 <?php
 
-namespace Magento\BilliePaymentMethod\Controller\Adminhtml\Log;
+namespace Billiepayment\BilliePaymentMethod\Controller\Adminhtml\Log;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;

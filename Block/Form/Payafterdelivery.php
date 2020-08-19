@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Magento\BilliePaymentMethod\Block\Form;
+namespace Billiepayment\BilliePaymentMethod\Block\Form;
 
 use \Magento\Framework\View\Element\Template\Context;
 

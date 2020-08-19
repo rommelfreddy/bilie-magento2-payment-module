@@ -7,11 +7,11 @@
  * Date: 19.01.20
  */
 
-namespace Magento\BilliePaymentMethod\Observer;
+namespace Billiepayment\BilliePaymentMethod\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
-use \Magento\BilliePaymentMethod\Helper\Data;
-use \Magento\BilliePaymentMethod\Helper\Log;
+use \Billiepayment\BilliePaymentMethod\Helper\Data;
+use \Billiepayment\BilliePaymentMethod\Helper\Log;
 use \Magento\Framework\Exception\LocalizedException;
 use \Magento\Store\Model\StoreManagerInterface;
 use \Magento\Framework\Message\ManagerInterface;
@@ -32,10 +32,10 @@ class CreateOrder implements ObserverInterface
 
     public function __construct(
         Data $helper,
-        \Magento\BilliePaymentMethod\Helper\Log $logHelper,
+        \Billiepayment\BilliePaymentMethod\Helper\Log $logHelper,
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\BilliePaymentMethod\Helper\Log $billieLogger,
+        \Billiepayment\BilliePaymentMethod\Helper\Log $billieLogger,
         \Psr\Log\LoggerInterface $logger
     )
     {

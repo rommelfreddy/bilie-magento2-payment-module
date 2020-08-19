@@ -8,6 +8,6 @@
 
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'Magento_BilliePaymentMethod',
+    'Billiepayment_BilliePaymentMethod',
     __DIR__
 );

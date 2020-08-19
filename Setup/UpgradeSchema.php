@@ -1,6 +1,6 @@
 <?php
 
-namespace Magento\BilliePaymentMethod\Setup;
+namespace Billiepayment\BilliePaymentMethod\Setup;
 
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Magento\BilliePaymentMethod\Helper;
+namespace Billiepayment\BilliePaymentMethod\Helper;
 
 use \Magento\Framework\App\Helper\AbstractHelper;
 

@@ -7,10 +7,10 @@
  * Date: 16.02.20
  */
 
-namespace Magento\BilliePaymentMethod\Model;
+namespace Billiepayment\BilliePaymentMethod\Model;
 
 
-use Magento\BilliePaymentMethod\Helper\Data;
+use Billiepayment\BilliePaymentMethod\Helper\Data;
 
 class AdditionalConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
 {

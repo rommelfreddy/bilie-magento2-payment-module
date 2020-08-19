@@ -6,7 +6,7 @@
  * User: ngongoll
  */
 
-namespace Magento\BilliePaymentMethod\Model\Payment;
+namespace Billiepayment\BilliePaymentMethod\Model\Payment;
 class Payafterdelivery extends \Magento\Payment\Model\Method\AbstractMethod
 {
     const PAYMENT_METHOD_PAYAFTERDELIVERY_CODE = 'payafterdelivery';
@@ -21,12 +21,12 @@ class Payafterdelivery extends \Magento\Payment\Model\Method\AbstractMethod
     /**
      * @var string
      */
-    protected $_formBlockType = \Magento\BilliePaymentMethod\Block\Form\Payafterdelivery::class;
+    protected $_formBlockType = \Billiepayment\BilliePaymentMethod\Block\Form\Payafterdelivery::class;
 
     /**
      * @var string
      */
-    protected $_infoBlockType = \Magento\BilliePaymentMethod\Block\Info\Payafterdelivery::class;
+    protected $_infoBlockType = \Billiepayment\BilliePaymentMethod\Block\Info\Payafterdelivery::class;
 
 //    /**
 //     * Availability option

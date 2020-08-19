@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Magento\BilliePaymentMethod\Model\ResourceModel\Log\Grid;
+namespace Billiepayment\BilliePaymentMethod\Model\ResourceModel\Log\Grid;
 
 use Magento\Framework\Api\Search\SearchResultInterface;
 use Magento\Framework\Search\AggregationInterface;
-use Magento\BilliePaymentMethod\Model\ResourceModel\Log\Collection as LogCollection;
+use Billiepayment\BilliePaymentMethod\Model\ResourceModel\Log\Collection as LogCollection;
 
 class Collection extends LogCollection implements SearchResultInterface
 {

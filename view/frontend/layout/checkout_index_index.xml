@@ -12,7 +12,7 @@
     </head>
     <body>
 <!--        <referenceBlock name="head.additional">-->
-<!--            <block class="Magento\BilliePaymentMethod\Block\Checkout\Config" name="billie.config.data" template="Magento_BilliePaymentMethod::config.phtml"/>-->
+<!--            <block class="Billiepayment\BilliePaymentMethod\Block\Checkout\Config" name="billie.config.data" template="Magento_BilliePaymentMethod::config.phtml"/>-->
 <!--        </referenceBlock>-->
         <referenceBlock name="checkout.root">
             <arguments>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Magento\BilliePaymentMethod\Model\ResourceModel\log;
+namespace Billiepayment\BilliePaymentMethod\Model\ResourceModel\log;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
@@ -13,6 +13,6 @@ class Collection extends AbstractCollection
      */
     public function _construct()
     {
-        $this->_init('Magento\BilliePaymentMethod\Model\Log', 'Magento\BilliePaymentMethod\Model\ResourceModel\Log');
+        $this->_init('Billiepayment\BilliePaymentMethod\Model\Log', 'Billiepayment\BilliePaymentMethod\Model\ResourceModel\Log');
     }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "magento/billie-payment-method",
+  "name": "billiepayment/billie-payment-method",
   "description": "Billie Paymentmethod Pay After delivery",
   "type": "magento2-module",
   "version": "1.0.0",
@@ -20,7 +20,7 @@
     },
     "billie-sdk": {
       "type": "git",
-      "url": "git@bitbucket.org:highdigitalde/billie-sdk.git"
+      "url": "git@github.com:ozean12/billie-shop-plugin-sdk.git"
     }
   }
 }

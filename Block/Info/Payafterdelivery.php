@@ -3,9 +3,9 @@
  * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\BilliePaymentMethod\Block\Info;
+namespace Billiepayment\BilliePaymentMethod\Block\Info;
 
-use \Magento\BilliePaymentMethod\Helper\Data;
+use \Billiepayment\BilliePaymentMethod\Helper\Data;
 use \Magento\Framework\View\Element\Template;
 use \Magento\Framework\View\Element\Template\Context;
 use \Magento\Store\Model\StoreManagerInterface;

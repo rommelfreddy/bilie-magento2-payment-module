@@ -1,6 +1,6 @@
 <?php
 
-namespace Magento\BilliePaymentMethod\Model\ResourceModel;
+namespace Billiepayment\BilliePaymentMethod\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 

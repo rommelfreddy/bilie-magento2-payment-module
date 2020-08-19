@@ -1,9 +1,9 @@
 <?php
 
-namespace Magento\BilliePaymentMethod\Controller\Token;
+namespace Billiepayment\BilliePaymentMethod\Controller\Token;
 
-use Magento\BilliePaymentMethod\Helper\Data;
-use Magento\BilliePaymentMethod\Helper\Log;
+use Billiepayment\BilliePaymentMethod\Helper\Data;
+use Billiepayment\BilliePaymentMethod\Helper\Log;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\Controller\ResultFactory;
 
@@ -19,8 +19,8 @@ class Index extends Action
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
-        \Magento\BilliePaymentMethod\Helper\Data $helper,
-        \Magento\BilliePaymentMethod\Helper\Log $billieLogger
+        \Billiepayment\BilliePaymentMethod\Helper\Data $helper,
+        \Billiepayment\BilliePaymentMethod\Helper\Log $billieLogger
     )
     {
         $this->helper = $helper;
