@@ -7,12 +7,12 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <script src="Magento_BilliePaymentMethod::js/billie-widget.js"/>
-        <css src="Magento_BilliePaymentMethod::css/billie_payafterdelivery.css"/>
+        <script src="Billiepayment_BilliePaymentMethod::js/billie-widget.js"/>
+        <css src="Billiepayment_BilliePaymentMethod::css/billie_payafterdelivery.css"/>
     </head>
     <body>
 <!--        <referenceBlock name="head.additional">-->
-<!--            <block class="Billiepayment\BilliePaymentMethod\Block\Checkout\Config" name="billie.config.data" template="Magento_BilliePaymentMethod::config.phtml"/>-->
+<!--            <block class="Billiepayment\BilliePaymentMethod\Block\Checkout\Config" name="billie.config.data" template="Billiepayment_BilliePaymentMethod::config.phtml"/>-->
 <!--        </referenceBlock>-->
         <referenceBlock name="checkout.root">
             <arguments>
@@ -31,7 +31,7 @@
                                                             <!-- merge payment method renders here -->
                                                             <item name="children" xsi:type="array">
                                                                 <item name="payafterdelivery" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Magento_BilliePaymentMethod/js/view/payment/payafterdelivery</item>
+                                                                    <item name="component" xsi:type="string">Billiepayment_BilliePaymentMethod/js/view/payment/payafterdelivery</item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="payafterdelivery" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>

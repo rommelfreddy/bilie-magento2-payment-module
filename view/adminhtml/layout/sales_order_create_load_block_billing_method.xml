@@ -28,8 +28,8 @@
     <body>
         <referenceBlock name="order.create.billing.method.form">
             <action method="setMethodFormTemplate">
-                <argument name="method" xsi:type="string">magento_billiePaymentMethod</argument>
-                <argument name="template" xsi:type="string">Magento_BilliePaymentMethod::payment/Payafterdelivery.phtml</argument>
+                <argument name="method" xsi:type="string">Billiepayment_billiePaymentMethod</argument>
+                <argument name="template" xsi:type="string">Billiepayment_BilliePaymentMethod::payment/Payafterdelivery.phtml</argument>
             </action>
         </referenceBlock>
     </body>

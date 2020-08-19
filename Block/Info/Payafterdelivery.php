@@ -22,14 +22,14 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
         parent::__construct($context);
     }
 
-    protected $_template = 'Magento_BilliePaymentMethod::invoice/view/payment.phtml';
+    protected $_template = 'Billiepayment_BilliePaymentMethod::invoice/view/payment.phtml';
     /**
      * Render as PDF
      * @return string
      */
     public function toPdf()
     {
-        $this->setTemplate('Magento_BilliePaymentMethod::invoice/view/pdf/payment.phtml');
+        $this->setTemplate('Billiepayment_BilliePaymentMethod::invoice/view/pdf/payment.phtml');
         return $this->toHtml();
     }
 

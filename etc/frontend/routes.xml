@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="standard">
         <route id="billiepayment" frontName="billiepayment">
-            <module name="Magento_BilliePaymentMethod"/>
+            <module name="Billiepayment_BilliePaymentMethod"/>
         </route>
     </router>
 </config>

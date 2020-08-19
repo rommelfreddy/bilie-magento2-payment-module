@@ -1,5 +1,5 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Billiepayment_Config:etc/system_file.xsd">
     <system>
         <tab id="billie" translate="label" sortOrder="400">
             <label>Billie</label>
@@ -8,7 +8,7 @@
             <class>separator-top</class>
             <label>Billie Core Config</label>
             <tab>billie</tab>
-            <resource>Magento_BilliePaymentMethod::config</resource>
+            <resource>Billiepayment_BilliePaymentMethod::config</resource>
             <group id="settings" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Setup</label>
                 <attribute type="expanded">1</attribute>

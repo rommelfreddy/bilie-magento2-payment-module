@@ -1,9 +1,9 @@
 define([
     'jquery',
-    'Magento_Checkout/js/view/payment/default',
-    'Magento_Checkout/js/model/quote',
-    'Magento_Customer/js/model/customer',
-    'Magento_Ui/js/model/messageList',
+    'Billiepayment_Checkout/js/view/payment/default',
+    'Billiepayment_Checkout/js/model/quote',
+    'Billiepayment_Customer/js/model/customer',
+    'Billiepayment_Ui/js/model/messageList',
     'mage/validation'
 ], function ($, Component, quote, customer,  globalMessageList) {
     'use strict';
@@ -12,7 +12,7 @@ define([
     return Component.extend({
 
         defaults: {
-            template: 'Magento_BilliePaymentMethod/payment/payafterdelivery',
+            template: 'Billiepayment_BilliePaymentMethod/payment/payafterdelivery',
             company: '',
             gender: '',
             lastnaem: '',

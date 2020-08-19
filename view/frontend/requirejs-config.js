@@ -3,12 +3,12 @@ var config = {
 
         '*': {
 
-            shoppingCart:           'Magento_Checkout/js/shopping-cart',
-            sidebar:                'Magento_Checkout/js/sidebar',
-            checkoutLoader:         'Magento_Checkout/js/checkout-loader',
-            checkoutData:           'Magento_Checkout/js/checkout-data',
-            proceedToCheckout:      'Magento_Checkout/js/proceed-to-checkout',
-            billiePayment:          'Magento_BilliePaymentMethod/js/billie-widget'
+            shoppingCart:           'Billiepayment_Checkout/js/shopping-cart',
+            sidebar:                'Billiepayment_Checkout/js/sidebar',
+            checkoutLoader:         'Billiepayment_Checkout/js/checkout-loader',
+            checkoutData:           'Billiepayment_Checkout/js/checkout-data',
+            proceedToCheckout:      'Billiepayment_Checkout/js/proceed-to-checkout',
+            billiePayment:          'Billiepayment_BilliePaymentMethod/js/billie-widget'
 
         }
     },

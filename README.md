@@ -18,7 +18,7 @@ A virtual IBAN is generated for each new invoice. These IBANs are unique to a de
 Go to your installation directory of Magento 2 and perform the following commands<br/>
 
 `composer config repositories.billie git git@github.com:ozean12/magento2.git`<br>
-`composer require magento/billie-payment-method`<br>
+`composer require billiepayment/billie-payment-method`<br>
 
 
 `composer config repositories.billie git git@github.com:ozean12/billie-shop-plugin-sdk.git`<br>
@@ -50,7 +50,7 @@ Goto System -> Configuration -> Customer -> Customer address head -> Enable pref
 ## Dokumentation
 
 #### Billie orders:
-![Billie Core Configuration](docs/img/billie_core_magento_menu.png)
+![Billie Core Configuration](docs/img/billie_core_Billiepayment_menu.png)
 
 
 Under Billie Payments -> Billie Order you find all orders made with Billie. You can sort and filter the columns as needed. The grid contains the following data<br/>

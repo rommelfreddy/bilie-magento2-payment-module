@@ -4,8 +4,8 @@
     <referenceBlock name="order_create_billing_form">
         <action method="setMethodFormTemplate">
             <!-- your method code and template -->
-            <argument name="method" xsi:type="string">magento_billiepaymentmethod</argument>
-            <argument name="template" xsi:type="string">Magento_BilliePaymentMethod::form/payafterdelivery.phtml</argument>
+            <argument name="method" xsi:type="string">Billiepayment_billiepaymentmethod</argument>
+            <argument name="template" xsi:type="string">Billiepayment_BilliePaymentMethod::form/payafterdelivery.phtml</argument>
         </action>
     </referenceBlock>
 </body>

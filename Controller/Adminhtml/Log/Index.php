@@ -13,7 +13,7 @@ class Index extends \Magento\Backend\App\Action
      *
      * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'Magento_BilliePaymentMethod::log';
+    const ADMIN_RESOURCE = 'Billiepayment_BilliePaymentMethod::log';
 
     /**
      * @var PageFactory
@@ -36,7 +36,7 @@ class Index extends \Magento\Backend\App\Action
     {
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Magento_BilliePaymentMethod::log');
+        $resultPage->setActiveMenu('Billiepayment_BilliePaymentMethod::log');
         $resultPage->getConfig()->getTitle()->set((__('Billie Logs')));
         return $resultPage;
     }
