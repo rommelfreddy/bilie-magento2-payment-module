@@ -2,7 +2,7 @@
   "name": "magento/billie-payment-method",
   "description": "Billie Paymentmethod Pay After delivery",
   "type": "magento2-module",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {
