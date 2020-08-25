@@ -1,9 +1,9 @@
 define([
     'jquery',
-    'Billiepayment_Checkout/js/view/payment/default',
-    'Billiepayment_Checkout/js/model/quote',
-    'Billiepayment_Customer/js/model/customer',
-    'Billiepayment_Ui/js/model/messageList',
+    'Magento_Checkout/js/view/payment/default',
+    'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/model/customer',
+    'Magento_Ui/js/model/messageList',
     'mage/validation'
 ], function ($, Component, quote, customer,  globalMessageList) {
     'use strict';
