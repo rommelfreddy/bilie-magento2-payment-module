@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Billiepayment_Backend:etc/menu.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="Billiepayment_BilliePaymentMethod::log" title="Billie Payment" module="Billiepayment_BilliePaymentMethod" sortOrder="20" dependsOnModule="Billiepayment_BilliePaymentMethod" action="billie/log/index" resource="Billiepayment_BilliePaymentMethod::log"/>
     </menu>
