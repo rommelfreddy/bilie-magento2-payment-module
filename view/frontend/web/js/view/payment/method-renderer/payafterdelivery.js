@@ -2,7 +2,7 @@ define([
     'jquery',
     'Magento_Checkout/js/view/payment/default',
     'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/model/customer',
+    'Magento_Customer/js/model/customer',
     'Magento_Ui/js/model/messageList',
     'mage/validation'
 ], function ($, Component, quote, customer,  globalMessageList) {
