@@ -5,4 +5,3 @@ class Log extends \Magento\Framework\Model\AbstractModel {
         $this->_init("Billiepayment\BilliePaymentMethod\Model\ResourceModel\Log");
     }
 }
-?>

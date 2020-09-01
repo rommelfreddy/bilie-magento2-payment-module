@@ -63,7 +63,7 @@ class UpdateOrder implements ObserverInterface
 
                 if ($billieResponse->state == 'complete') {
 
-                    $this->_messageManager->addNotice(Mage::Helper('billie_core')->__('This transaction is already closed, refunds with billie payment are not possible anymore'));
+                    $this->_messageManager->addNotice(__('This transaction is already closed, refunds with billie payment are not possible anymore'));
 
                 } else {
 
