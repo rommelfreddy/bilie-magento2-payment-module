@@ -7,13 +7,12 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <script src="Billiepayment_BilliePaymentMethod::js/billie-widget.js"/>
         <css src="Billiepayment_BilliePaymentMethod::css/billie_payafterdelivery.css"/>
     </head>
     <body>
-<!--        <referenceBlock name="head.additional">-->
-<!--            <block class="Billiepayment\BilliePaymentMethod\Block\Checkout\Config" name="billie.config.data" template="Billiepayment_BilliePaymentMethod::config.phtml"/>-->
-<!--        </referenceBlock>-->
+        <referenceBlock name="head.additional">
+            <block class="Billiepayment\BilliePaymentMethod\Block\Checkout\Config" name="billie.config.data" template="Billiepayment_BilliePaymentMethod::config.phtml"/>
+        </referenceBlock>
         <referenceBlock name="checkout.root">
             <arguments>
                 <argument name="jsLayout" xsi:type="array">
