@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.0.2] - 2020.09.21
+- add missing template file (ngongoll)
 ## [1.0.1] - 2020.09.17
 - fix sandbox/live mode (ngongoll)
 ## [1.0.0] - 2020.08.19
