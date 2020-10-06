@@ -15,5 +15,7 @@
             <argument name="resourceModel" xsi:type="string">Billiepayment\BilliePaymentMethod\Model\ResourceModel\Log</argument>
         </arguments>
     </virtualType>
-
+    <type name="Magento\Checkout\Model\DefaultConfigProvider">
+        <plugin name="checkout-summary-product-attribute" type="Billiepayment\BilliePaymentMethod\Model\DefaultConfigProvider" />
+    </type>
 </config>

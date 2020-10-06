@@ -8,6 +8,7 @@ define([
 ], function ($, Component, quote, customer,  globalMessageList) {
     'use strict';
     var billie_config_data = {};
+
     var billie_order_data = {};
     return Component.extend({
 
@@ -92,8 +93,11 @@ define([
                 var item = items[id];
                 var line_item = {
                     "external_id": item.product_id,
-                    "title": item.sku,
+                    "title": item.name,
                     "quantity": item.qty,
+                    "description": item.description,
+                    "brand": item.manufacturer,
+                    "category": item.category,
                     "amount": {
                         "net": Number(item.base_price_incl_tax - item.base_discount_amount - item.tax_amount).toFixed(2),
                         "gross": Number(item.base_price_incl_tax - item.base_discount_amount).toFixed(2),
