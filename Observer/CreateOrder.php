@@ -116,7 +116,7 @@ class CreateOrder implements ObserverInterface
 
             $errorMsg = __($e->getViolations()['0']);
 
-            $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse);
+            $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse ?? null);
             throw new LocalizedException(__($errorMsg));
 
         }

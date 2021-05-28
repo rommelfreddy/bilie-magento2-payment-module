@@ -23,7 +23,7 @@ class Log extends AbstractHelper
         $this->helper = $helper;
     }
 
-    public function billieLog($order, $request, $response)
+    public function billieLog($order, $request, $response = null)
     {
         $billieLogger = $this->_billieLogger->create();
 
@@ -35,7 +35,7 @@ class Log extends AbstractHelper
             'transaction_tstamp' => date('Y-m-d H:i:s',time()),
             'created_at' => $order->getCreatedAt(),
             'customer_id' => $order->getCustomerId(),
-            'billie_state' => $response->state,
+            'billie_state' => $response->state ?? null,
             'mode' => $this->helper->getMode() ? 'sandbox' : 'live',
             'request' => json_encode($request)
         );
