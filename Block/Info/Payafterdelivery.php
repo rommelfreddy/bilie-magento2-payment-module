@@ -1,8 +1,5 @@
-<?php
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
+<?php declare(strict_types=1);
+
 namespace Billiepayment\BilliePaymentMethod\Block\Info;
 
 use \Billiepayment\BilliePaymentMethod\Helper\Data;
@@ -15,6 +12,12 @@ use \Magento\Store\Model\StoreManagerInterface;
  */
 class Payafterdelivery extends \Magento\Payment\Block\Info
 {
+
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\Data
+     */
+    protected $helper;
+
     public function __construct(Context $context, StoreManagerInterface $storeManager, Data $helper)
     {
         $this->_storeManager = $storeManager;
@@ -59,8 +62,7 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
             $data[(string)__('VBIC')] = $oInfo->getBillieVbic();
         }
         if ($this->getInfo()->getBillieVbic()) {
-            $bankaccount = $this->helper->getBankAccountByBic($this->getInfo()->getBillieVbic());
-            $data[(string)__('Bank')] = $bankaccount['label'];
+            $data[(string)__('Bank')] = $this->helper->getBankAccountByBic($this->getInfo()->getBillieVbic());
         }
         if ($oInfo->getBillieDuration() && $this->isAdmin()) {
             $data[(string)__('Duration')] = $this->getDuration();

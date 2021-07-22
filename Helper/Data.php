@@ -1,38 +1,42 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Billiepayment\BilliePaymentMethod\Helper;
 
-use \Magento\Framework\App\Helper\AbstractHelper;
+use Billie\Sdk\Model\Amount;
+use Billie\Sdk\Model\DebtorCompany;
+use Billie\Sdk\Model\Request\CheckoutSessionConfirmRequestModel;
+use Billie\Sdk\Model\Request\GetBankDataRequestModel;
+use Billie\Sdk\Model\Request\ShipOrderRequestModel;
+use Billie\Sdk\Model\Request\UpdateOrderRequestModel;
+use Billie\Sdk\Service\Request\GetBankDataRequest;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Sales\Model\Order;
 
 class Data extends AbstractHelper
 {
     const sandboxMode = 'payment/payafterdelivery/sandbox';
-    const apiConsumerKey = 'payment/payafterdelivery/consumer_key';
-    const apiConsumerSecretKey = 'payment/payafterdelivery/consumer_secret_key';
     const duration = 'payment/payafterdelivery/duration';
-    const housenumberField = 'billie_core/config/housenumber';
     const invoiceUrl = 'billie_core/config/invoice_url';
-    const paymentmethodCode = 'payafterdelivery';
 
-    /** @var mixed */
-    protected $storeId = null;
+    const PAYMENT_METHOD_CODE = 'payafterdelivery';
 
     /**
-     * @param mixed $storeId
+     * @var \Magento\Framework\Serialize\Serializer\Json
      */
-    public function setStoreId($storeId)
+    private $json;
+
+    public function __construct(Context $context, Json $json)
     {
-        $this->storeId = $storeId;
+        parent::__construct($context);
+        $this->json = $json;
     }
+
 
     /**
-     * @return mixed
+     * @deprecated
      */
-    public function getStoreId()
-    {
-        return $this->storeId;
-    }
-
     public function getConfig($config_path)
     {
         return $this->scopeConfig->getValue(
@@ -41,159 +45,67 @@ class Data extends AbstractHelper
         );
     }
 
-    public function clientCreate()
+
+    /**
+     * @param Order $order
+     * @return \Billie\Sdk\Model\Request\CheckoutSessionConfirmRequestModel|null
+     */
+    public function createCheckoutSessionConfirmModel(Order $order)
     {
-        return \Billie\HttpClient\BillieClient::create($this->getConfig(self::apiConsumerKey), $this->getConfig(self::apiConsumerSecretKey), $this->getMode());
-
-    }
-
-    public function sessionConfirmOrder($order){
 
         $payment = $order->getPayment();
 
-        if ($payment->getCode() != self::paymentmethodCode && $payment->getMethod() != self::paymentmethodCode) {
-            return;
-        }
-        $payment = $order->getPayment();
-        $widgetResObj = json_decode($payment->getAdditionalInformation('widget_res'));
+        $widgetResponse = $this->json->unserialize($payment->getAdditionalInformation('widget_res'));
 
-        $command = new \Billie\Command\CheckoutSessionConfirm($payment->getAdditionalInformation('token'));
-
-        $command->duration = intval( $this->getConfig(self::duration,$this->getStoreId()) );
-
-        // Company information
-        $command->debtorCompany = new \Billie\Model\DebtorCompany();
-        $command->debtorCompany->name = $widgetResObj->name;
-        $command->debtorCompany->addressStreet = $widgetResObj->address_street;
-        $command->debtorCompany->addressCity = $widgetResObj->address_city;
-        $command->debtorCompany->addressPostalCode = $widgetResObj->address_postal_code;
-        $command->debtorCompany->addressCountry = $widgetResObj->address_country;
-        $command->debtorCompany->addressHouseNumber = $widgetResObj->address_house_number;
-
-        $command->amount = new \Billie\Model\Amount(($order->getBaseGrandTotal() - $order->getBaseTaxAmount())*100, $order->getGlobalCurrencyCode(), $order->getBaseTaxAmount()*100); // amounts are in cent!
-
-        return $command;
-
+        return (new CheckoutSessionConfirmRequestModel())
+            ->setSessionUuid($payment->getAdditionalInformation('token'))
+            ->setDuration((int)$this->getConfig(self::duration))
+            ->setCompany((new DebtorCompany($widgetResponse)))
+            ->setAmount((new Amount())
+                ->setNet($order->getBaseGrandTotal() - $order->getBaseTaxAmount())
+                ->setGross($order->getBaseGrandTotal())
+                ->setTax($order->getBaseTaxAmount())
+            );
     }
 
 
-    public function mapCreateOrderData($order)
+    public function getReduceOrderModel(Order $order)
     {
+        $newTotalAmount = $order->getBaseTotalInvoiced() - $order->getBaseTotalOfflineRefunded() - $order->getBaseTotalOnlineRefunded();
+        $newTaxAmount = $order->getTaxInvoiced() - $order->getTaxRefunded();
 
-        $billingAddress = $order->getBillingAddress();
-        $shippingAddress = $order->getShippingAddress();
-        $payment = $order->getPayment();
-
-        $customerId = $order->getCustomerId()?$order->getCustomerId():$order->getCustomerEmail();
-
-        $command = new \Billie\Command\CreateOrder();
-
-        // Company information
-        $command->debtorCompany = new \Billie\Model\Company($customerId, $payment->getBillieCompany()?$payment->getBillieCompany():$shippingAddress->getCompany(), $this->mapAddress($billingAddress));
-        $command->debtorCompany->legalForm = $payment->getBillieLegalForm()?$payment->getBillieLegalForm():'10001';
-        $command->debtorCompany->taxId = $payment->getBillieTaxId()?$payment->getBillieTaxId():'123456';
-        $command->debtorCompany->registrationNumber = $payment->getBillieRegistrationNumber()?$payment->getBillieRegistrationNumber():'Amtsgericht Charlottenburg';
-
-        // Information about the person
-        $command->debtorPerson = new \Billie\Model\Person($order->getCustomerEmail());
-        $command->debtorPerson->salution = ($payment->getBillieSalutation() ? 'm' : 'f');
-
-        $command->deliveryAddress = $this->mapAddress($shippingAddress);
-
-        // Amount
-        $command->amount = new \Billie\Model\Amount(($order->getBaseGrandTotal() - $order->getBaseTaxAmount())*100, $order->getGlobalCurrencyCode(), $order->getBaseTaxAmount()*100); // amounts are in cent!
-
-        // Define the due date in DAYS AFTER SHIPPMENT
-        $command->duration = intval( $this->getConfig(self::duration,$this->getStoreId()) );
-
-        return $command;
+        return (new UpdateOrderRequestModel($order->getBillieReferenceId()))
+            ->setAmount((new Amount())
+                ->setNet($newTotalAmount - $newTaxAmount)
+                ->setGross($newTotalAmount)
+                ->setTax($newTaxAmount)
+            );
     }
 
     /**
-     * @param $order
-     * @return CancelOrder
-     *
+     * @param Order $order
+     * @return \Billie\Sdk\Model\Request\ShipOrderRequestModel
      */
-
-    public function cancel($order){
-
-        return  new \Billie\Command\CancelOrder($order->getBillieReferenceId());
-
-    }
-
-
-    public function updateOrder($order)
+    public function getShipOrderModel(Order $order)
     {
-        $command = new \Billie\Command\UpdateOrder($order->getBillieReferenceId());
-        $command->orderId = $order->getIncrementId();
-
-        return $command;
-    }
-
-    public function reduceAmount($order){
-
-        $command = new \Billie\Command\ReduceOrderAmount($order->getBillieReferenceId());
-        $newTotalAmount = $order->getData('base_total_invoiced') - $order->getData('base_total_offline_refunded') - $order->getData('base_total_online_refunded');
-        $newTaxAmount = $order->getData('base_tax_invoiced') - $order->getData('base_tax_refunded');
-        if($order->hasShipments()){
-            $command->invoiceNumber = $order->getInvoiceCollection()->getFirstItem()->getIncrementId();
-            $command->invoiceUrl = $this->getConfig(self::invoiceUrl,$this->getStoreId()).'/'.$order->getIncrementId().'.pdf';
-        }
-        $command->amount = new \Billie\Model\Amount(($newTotalAmount-$newTaxAmount)*100, $order->getData('base_currency_code'), $newTaxAmount*100);
-
-        return $command;
-
-    }
-
-    public function mapShipOrderData($order)
-    {
-        $command = new \Billie\Command\ShipOrder($order->getBillieReferenceId());
-
-        $command->orderId = $order->getIncrementId();
-        $command->invoiceNumber = $order->getInvoiceCollection()->getFirstItem()->getIncrementId();
-
-        $command->invoiceUrl = $this->getConfig(self::invoiceUrl) . '/' . $order->getIncrementId() . '.pdf';
-
-        return $command;
-    }
-
-    public function mapAddress($address)
-    {
-
-//        if(!$this->getConfig(self::housenumberField,$this->getStoreId())) {
-//            $housenumber = '';
-//        }else if($this->getConfig(self::housenumberField,$this->getStoreId()) != 'street'){
-//            $housenumber = $address->getData($this->getConfig(self::housenumberField,$this->getStoreId()));
-//        }else{
-//            $housenumber = $address->getStreet()[1];
-//        }
-
-        $housenumber = $address->getStreet()[1];
-
-        $addressObj = new \Billie\Model\Address();
-        $addressObj->street = $address->getStreet()[0];
-        $addressObj->houseNumber = $housenumber;
-        $addressObj->postalCode = $address->getPostcode();
-        $addressObj->city = $address->getCity();
-        $addressObj->countryCode = $address->getCountryId();
-
-        return $addressObj;
+        return (new ShipOrderRequestModel($order->getBillieReferenceId()))
+            ->setInvoiceNumber($order->getInvoiceCollection()->getFirstItem()->getIncrementId())
+            ->setInvoiceUrl($this->getConfig(self::invoiceUrl) . '/' . $order->getIncrementId() . '.pdf');
     }
 
     /**
      * @param $bic
-     * @return \Billie\Util\BillieBankaccountProvider
+     * @return string|null
      */
-
     public function getBankAccountByBic($bic)
     {
-        $billieBankaccountProvider = new \Billie\Util\BillieBankaccountProvider;
-        return $billieBankaccountProvider->get($bic);
-
+        $bankDataRequest = new GetBankDataRequest();
+        $response = $bankDataRequest->execute(new GetBankDataRequestModel());
+        return $response->getBankName($bic);
     }
-    public function getMode(){
 
+    public function getMode()
+    {
         return $this->getConfig(self::sandboxMode);
-
     }
 }

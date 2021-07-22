@@ -1,46 +1,59 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Billiepayment\BilliePaymentMethod\Controller\Token;
 
-use Billiepayment\BilliePaymentMethod\Helper\Data;
-use Billiepayment\BilliePaymentMethod\Helper\Log;
+use Billie\Sdk\Exception\BillieException;
+use Billie\Sdk\Model\Request\CreateSessionRequestModel;
+use Billie\Sdk\Service\Request\CreateSessionRequest;
+use Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper;
 use Magento\Framework\App\Action\Action;
-use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\Result\JsonFactory;
 
 class Index extends Action
 {
 
-    protected $helper;
-    protected $billieLogger;
     /**
      * @var \Magento\Framework\Controller\Result\JsonFactory
      */
     private $jsonResultFactory;
+
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper
+     */
+    private $billieClientHelper;
+
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
-        \Billiepayment\BilliePaymentMethod\Helper\Data $helper,
-        \Billiepayment\BilliePaymentMethod\Helper\Log $billieLogger
+        Context $context,
+        JsonFactory $jsonResultFactory,
+        BillieClientHelper $billieClientHelper
     )
     {
-        $this->helper = $helper;
-        $this->billieLogger = $billieLogger;
-        $this->jsonResultFactory = $jsonResultFactory;
         parent::__construct($context);
+        $this->jsonResultFactory = $jsonResultFactory;
+        $this->billieClientHelper = $billieClientHelper;
     }
 
     public function execute()
     {
-
+        $result = $this->jsonResultFactory->create();
         $merchantCustomerId = $this->_request->getParam('merchant_customer_id');
 
-        $client = $this->helper->clientCreate();
+        try {
+            $request = new CreateSessionRequest($this->billieClientHelper->getBillieClientInstance());
+            $response = $request->execute((new CreateSessionRequestModel())->setMerchantCustomerId($merchantCustomerId));
 
-        $billieResponse = $client->checkoutSessionCreate($merchantCustomerId);
+            $result->setData([
+                'status' => true,
+                'session_id' => $response->getCheckoutSessionId()
+            ]);
+        } catch (BillieException $e) {
+            $result->setData([
+                'status' => false,
+                'session_id' => $e->getMessage()
+            ]);
+        }
 
-        $data = ['session_id' => $billieResponse];
-        $result = $this->jsonResultFactory->create();
-        $result->setData($data);
         return $result;
     }
 }

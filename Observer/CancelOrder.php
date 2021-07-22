@@ -1,68 +1,65 @@
-<?php
-/**
- * Created by HIGHDIGITAL
- * @package     billie-magento-2
- * @copyright   Copyright (c) 2020 HIGHDIGITAL UG (https://www.highdigital.de)
- * User: ngongoll
- * Date: 19.01.20
- */
+<?php declare(strict_types=1);
 
 namespace Billiepayment\BilliePaymentMethod\Observer;
 
+use Billie\Sdk\Exception\BillieException;
+use Billie\Sdk\Model\Request\OrderRequestModel;
+use Billie\Sdk\Service\Request\CancelOrderRequest;
+use Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper;
+use Billiepayment\BilliePaymentMethod\Helper\Data;
+use Billiepayment\BilliePaymentMethod\Helper\Log;
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use \Billiepayment\BilliePaymentMethod\Helper\Data;
-use \Billiepayment\BilliePaymentMethod\Helper\Log;
-use \Magento\Framework\Exception\LocalizedException;
-use \Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 class CancelOrder implements ObserverInterface
 {
 
-    const paymentmethodCode = 'payafterdelivery';
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\Data
+     */
+    protected $helper;
 
-    protected $storeManager;
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\Log
+     */
     protected $billieLogger;
 
-    public function __construct(
-        Data $helper,
-        \Billiepayment\BilliePaymentMethod\Helper\Log $billieLogger,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
-    )
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper
+     */
+    private $billieClientHelper;
+
+    public function __construct(Data $helper, Log $billieLogger, BillieClientHelper $billieClientHelper)
     {
         $this->helper = $helper;
         $this->billieLogger = $billieLogger;
-        $this->_storeManager = $storeManager;
+        $this->billieClientHelper = $billieClientHelper;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
-        $order = $observer->getEvent()->getOrder();
-
-        $payment = $order->getPayment()->getMethodInstance();
-
         /** @var \Magento\Sales\Model\Order $order */
+        $order = $observer->getEvent()->getOrder();
+        $payment = $order->getPayment() ? $order->getPayment()->getMethodInstance() : null;
 
-        if ($payment->getCode() != self::paymentmethodCode && $payment->getMethod() != self::paymentmethodCode) {
+        if ($payment && $payment->getCode() !== Data::PAYMENT_METHOD_CODE) {
             return;
         }
 
-         try {
+        $requestModel = new OrderRequestModel($order->getBillieReferenceId());
+        try {
+            $billieClient = $this->billieClientHelper->getBillieClientInstance();
 
-            $client = $this->helper->clientCreate();
+            (new CancelOrderRequest($billieClient))->execute($requestModel);
 
-            $billieCancelData = $this->helper->cancel($order);
-            $client->cancelOrder($billieCancelData);
-
-            $billieResponse = (object) ['state' => 'canceled'];
-            $this->billieLogger->billieLog($order, $billieCancelData, $billieResponse);
-            $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
+            $order->addCommentToStatusHistory(__('Billie Payment: The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
             $order->save();
 
-        } catch (Exception $error) {
-
-            throw new LocalizedException(__($error->getMessage()));
-
+            $this->billieLogger->billieLog($order, $requestModel, 'canceled');
+        } catch (BillieException $exception) {
+            $this->billieLogger->billieLog($order, $requestModel, $exception);
+            throw new LocalizedException(__($exception->getMessage()));
         }
-
     }
 }

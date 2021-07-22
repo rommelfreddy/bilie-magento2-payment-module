@@ -1,93 +1,92 @@
-<?php
-/**
- * Created by HIGHDIGITAL
- * @package     billie-magento-2
- * @copyright   Copyright (c) 2020 HIGHDIGITAL UG (https://www.highdigital.de)
- * User: ngongoll
- * Date: 19.01.20
- */
+<?php declare(strict_types=1);
 
 namespace Billiepayment\BilliePaymentMethod\Observer;
 
+use Billie\Sdk\Exception\BillieException;
+use Billie\Sdk\Model\Order;
+use Billie\Sdk\Model\Request\OrderRequestModel;
+use Billie\Sdk\Service\Request\CancelOrderRequest;
+use Billie\Sdk\Service\Request\GetOrderDetailsRequest;
+use Billie\Sdk\Service\Request\UpdateOrderRequest;
+use Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper;
+use Billiepayment\BilliePaymentMethod\Helper\Data;
+use Billiepayment\BilliePaymentMethod\Helper\Log;
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use \Billiepayment\BilliePaymentMethod\Helper\Data;
-use \Billiepayment\BilliePaymentMethod\Helper\Log;
-use \Magento\Framework\Exception\LocalizedException;
-use \Magento\Store\Model\StoreManagerInterface;
-use \Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 class UpdateOrder implements ObserverInterface
 {
 
-    const paymentmethodCode = 'payafterdelivery';
-    const duration = 'payment/payafterdelivery/duration';
-
-    protected $storeManager;
-    protected $messageManager;
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\Log
+     */
     protected $billieLogger;
 
-    public function __construct(
-        Data $helper,
-        \Billiepayment\BilliePaymentMethod\Helper\Log $billieLogger,
-        \Magento\Framework\Message\ManagerInterface $messageManager,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Psr\Log\LoggerInterface $logger)
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\Data
+     */
+    protected $billieHelper;
+
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper
+     */
+    private $billieClientHelper;
+
+    public function __construct(Data $helper, Log $billieLogger, BillieClientHelper $billieClientHelper)
     {
-        $this->helper = $helper;
+        $this->billieHelper = $helper;
         $this->billieLogger = $billieLogger;
-        $this->_messageManager = $messageManager;
-        $this->_storeManager = $storeManager;
-        $this->logger = $logger;
+        $this->billieClientHelper = $billieClientHelper;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
 
         $creditMemo = $observer->getEvent()->getCreditmemo();
+        /** @var \Magento\Sales\Model\Order $order */
         $order = $creditMemo->getOrder();
-        $payment = $order->getPayment()->getMethodInstance();
+        $payment = $order->getPayment() ? $order->getPayment()->getMethodInstance() : null;
 
-        if ($payment->getCode() != self::paymentmethodCode && $payment->getMethod() != self::paymentmethodCode) {
-
+        if ($payment && $payment->getCode() !== Data::PAYMENT_METHOD_CODE) {
             return;
         }
+
+        $requestModel = null;
         try {
 
-            $client = $this->helper->clientCreate();
+            $billieClient = $this->billieClientHelper->getBillieClientInstance();
 
             if ($order->canCreditmemo()) {
 
-                $billieUpdateData = $this->helper->reduceAmount($order);
-                $billieResponse = $client->reduceOrderAmount($billieUpdateData);
-                $this->billieLogger->billieLog($order, $billieUpdateData, $billieResponse);
+                $billieOrder = (new GetOrderDetailsRequest($billieClient))->execute(new OrderRequestModel($order->getBillieReferenceId()));
 
-                if ($billieResponse->state == 'complete') {
-
-                    $this->_messageManager->addNotice(__('This transaction is already closed, refunds with billie payment are not possible anymore'));
-
-                } else {
-
-                    $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The amount for transaction with the id %1 was successfully reduced.', $order->getBillieReferenceId()));
-                    $order->save();
-
+                if ($billieOrder->getState() === Order::STATE_COMPLETED) {
+                    throw new LocalizedException(__('This transaction is already completed, refunds with billie payment are not possible anymore'));
+                } else if ($billieOrder->getState() === Order::STATE_CANCELLED) {
+                    throw new LocalizedException(__('This transaction is already canceled, refunds with billie payment are not possible anymore'));
                 }
-            } else {
-                $billieCancelData = $this->helper->cancel($order);
-                $client->cancelOrder($billieCancelData);
 
-                $billieResponse = (object)['state' => 'canceled'];
-                $this->billieLogger->billieLog($order, $billieCancelData, $billieResponse);
+                $requestModel = $this->billieHelper->getReduceOrderModel($order);
+                (new UpdateOrderRequest($billieClient))->execute($requestModel);
 
-                $order->addStatusHistoryComment(__('Billie PayAfterDelivery:  The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
+                $order->addCommentToStatusHistory(__('Billie Payment: The amount for transaction with the id %1 was successfully reduced.', $order->getBillieReferenceId()));
                 $order->save();
 
+                $this->billieLogger->billieLog($order, $requestModel);
+            } else {
+                $requestModel = new OrderRequestModel($order->getBillieReferenceId());
+                (new CancelOrderRequest($billieClient))->execute($requestModel);
+
+                $order->addCommentToStatusHistory(__('Billie Payment: The transaction with the id %1 was successfully canceled.', $order->getBillieReferenceId()));
+                $order->save();
+
+                $this->billieLogger->billieLog($order, $requestModel, 'canceled');
             }
 
-        } catch (Exception $error) {
-
-            throw new LocalizedException(__($error->getMessage()));
-
+        } catch (BillieException $exception) {
+            $this->billieLogger->billieLog($order, $requestModel, $exception);
+            throw new LocalizedException(__($exception->getMessage()));
         }
-
     }
 }

@@ -1,144 +1,146 @@
-<?php
-/**
- * Created by HIGHDIGITAL
- * @package     billie-magento-2
- * @copyright   Copyright (c) 2020 HIGHDIGITAL UG (https://www.highdigital.de)
- * User: ngongoll
- * Date: 19.01.20
- */
+<?php declare(strict_types=1);
 
 namespace Billiepayment\BilliePaymentMethod\Observer;
 
+use Billie\Sdk\Exception\BillieException;
+use Billie\Sdk\Model\Request\UpdateOrderRequestModel;
+use Billie\Sdk\Service\Request\CheckoutSessionConfirmRequest;
+use Billie\Sdk\Service\Request\UpdateOrderRequest;
+use Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper;
+use Billiepayment\BilliePaymentMethod\Helper\Data;
+use Billiepayment\BilliePaymentMethod\Helper\Log;
+use Exception;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use \Billiepayment\BilliePaymentMethod\Helper\Data;
-use \Billiepayment\BilliePaymentMethod\Helper\Log;
-use \Magento\Framework\Exception\LocalizedException;
-use \Magento\Store\Model\StoreManagerInterface;
-use \Magento\Framework\Message\ManagerInterface;
-use Magento\Payment\Observer\AbstractDataAssignObserver;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Store\Model\ScopeInterface;
 
 class CreateOrder implements ObserverInterface
 {
 
-    const paymentmethodCode = 'payafterdelivery';
-    const duration = 'payment/payafterdelivery/duration';
+    const PAYMENT_METHOD_CODE = 'payafterdelivery';
 
-    protected $_storeManager;
-    protected $_messageManager;
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\Log
+     */
     protected $billieLogger;
-    protected $logger;
 
+    /**
+     * @var Data
+     */
+    protected $billieHelper;
+
+    /**
+     * @var \Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper
+     */
+    private $billieClientHelper;
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
+    private $scopeConfig;
 
 
     public function __construct(
         Data $helper,
-        \Billiepayment\BilliePaymentMethod\Helper\Log $logHelper,
-        \Magento\Framework\Message\ManagerInterface $messageManager,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Billiepayment\BilliePaymentMethod\Helper\Log $billieLogger,
-        \Psr\Log\LoggerInterface $logger
+        Log $billieLogger,
+        ScopeConfigInterface $scopeConfig,
+        BillieClientHelper $billieClientHelper
     )
     {
-        $this->helper = $helper;
-        $this->logHelper = $logHelper;
-        $this->_messageManager = $messageManager;
-        $this->_storeManager = $storeManager;
+        $this->billieHelper = $helper;
         $this->billieLogger = $billieLogger;
-        $this->logger = $logger;
+        $this->scopeConfig = $scopeConfig;
+        $this->billieClientHelper = $billieClientHelper;
     }
 
     /**
      * @param \Magento\Framework\Event\Observer $observer
      *
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
 
+        /** @var \Magento\Sales\Model\Order $order */
         $order = $observer->getEvent()->getOrder();
         $payment = $order->getPayment();
 
-        if ($payment->getCode() != self::paymentmethodCode && $payment->getMethod() != self::paymentmethodCode) {
+        if ($payment && $payment->getCode() !== Data::PAYMENT_METHOD_CODE && $payment->getMethod() !== Data::PAYMENT_METHOD_CODE) {
             return;
         }
-        $this->helper->setStoreId($order->getStoreId());
-        $billieSessionData = $this->helper->sessionConfirmOrder($order);
+
+        $confirmModel = $this->billieHelper->createCheckoutSessionConfirmModel($order);
+        if ($confirmModel === null) {
+            return;
+        }
 
         try {
-            // initialize Billie Client
+            $billieClient = $this->billieClientHelper->getBillieClientInstance();
 
-            $client = $this->helper->clientCreate();
-            $this->logger->debug(print_r($billieSessionData,true));
+            $request = new CheckoutSessionConfirmRequest($billieClient);
+            $billieOrder = $request->execute($confirmModel);
 
-            $billieResponse = (object)$client->checkoutSessionConfirm($billieSessionData);
-            $order->setData('billie_reference_id', $billieResponse->uuid);
+            $order->setData('billie_reference_id', $billieOrder->getUuid());
 
-            if($this->compareAddress($order)){
-
-                $shippingAddress = $order->getShippingaddress();
-                $shippingAddress->setData('company', $billieResponse->debtor_company['name']);
-                $shippingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);
-                $shippingAddress->setData('postcode', $billieResponse->debtor_company['address_postal_code']);
-                $shippingAddress->setData('city', $billieResponse->debtor_company['address_city']);
-                $shippingAddress->setData('country_id', $billieResponse->debtor_company['address_country']);
-
+            $billieDebtorAddress = $billieOrder->getCompany()->getAddress();
+            if ($this->compareAddress($order) && ($shippingAddress = $order->getShippingaddress())) {
+                $shippingAddress->setData('company', $billieOrder->getCompany()->getName());
+                $shippingAddress->setData('street', $billieDebtorAddress->getStreet() . ' ' . $billieDebtorAddress->getHouseNumber());
+                $shippingAddress->setData('postcode', $billieDebtorAddress->getPostalCode());
+                $shippingAddress->setData('city', $billieDebtorAddress->getCity());
+                $shippingAddress->setData('country_id', $billieDebtorAddress->getCountryCode());
             }
+
             $billingAddress = $order->getBillingaddress();
-            $billingAddress->setData('company', $billieResponse->debtor_company['name']);;
-            $billingAddress->setData('street', $billieResponse->debtor_company['address_street'] . ' ' . $billieResponse->debtor_company['address_house_number']);
-            $billingAddress->setData('postcode', $billieResponse->debtor_company['address_postal_code']);
-            $billingAddress->setData('city', $billieResponse->debtor_company['address_city']);
-            $billingAddress->setData('country_id', $billieResponse->debtor_company['address_country']);
+            if ($billingAddress) { // there is no reason that the address could be null, just to be safe ;-)
+                $billingAddress->setData('company', $billieOrder->getCompany()->getName());
+                $billingAddress->setData('street', $billieDebtorAddress->getStreet() . ' ' . $billieDebtorAddress->getHouseNumber());
+                $billingAddress->setData('postcode', $billieDebtorAddress->getPostalCode());
+                $billingAddress->setData('city', $billieDebtorAddress->getCity());
+                $billingAddress->setData('country_id', $billieDebtorAddress->getCountryCode());
+            }
 
-            $payment->setData('billie_viban', $billieResponse->bank_account['iban']);
-            $payment->setData('billie_vbic', $billieResponse->bank_account['bic']);
-            $payment->setData('billie_duration', intval( $this->helper->getConfig(self::duration,$order->getStoreId())));
-            $payment->setData('billie_company', $payment->getAdditionalInformation('company'));
+            $payment->setData('billie_reference_id', $billieOrder->getUuid());
+            $payment->setData('billie_viban', $billieOrder->getBankAccount()->getIban());
+            $payment->setData('billie_vbic', $billieOrder->getBankAccount()->getBic());
+            $payment->setData('billie_duration', $billieOrder->getDuration());
+            $payment->setData('billie_company', $this->scopeConfig->getValue('general/store_information/name', ScopeInterface::SCOPE_STORE, $order->getStoreId()));
 
-            $order->addStatusHistoryComment(__('Billie PayAfterDelivery: payment accepted for %1', $billieResponse->uuid));
+            $order->addStatusHistoryComment(__('Billie Payment: payment accepted for %1', $billieOrder->getUuid()));
 
             $order->save();
             $payment->save();
 
-            //updateOrder for submit order_id
-            $billieUpdateData = $this->helper->updateOrder($order);
-            $billieResponse = $client->updateOrder($billieUpdateData);
+            // set increment id on billie gateway
+            (new UpdateOrderRequest($billieClient))->execute(
+                (new UpdateOrderRequestModel($billieOrder->getUuid()))
+                    ->setOrderId($order->getIncrementId()));
 
-            $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse);
+            $this->billieLogger->billieLog($order, $confirmModel, $billieOrder);
 
-
-        }catch (\Billie\Exception\BillieException $e){
+        } catch (BillieException $e) {
             $errorMsg = __($e->getBillieCode());
-
-            //$this->billieLogger->billieLog($order, $billieSessionData, $errorMsg);
+            $this->billieLogger->billieLog($order, $confirmModel, $errorMsg);
             throw new LocalizedException(__($errorMsg));
-
-        }catch (\Billie\Exception\InvalidCommandException $e){
-
-            $errorMsg = __($e->getViolations()['0']);
-
-            $this->billieLogger->billieLog($order, $billieSessionData, $billieResponse ?? null);
-            throw new LocalizedException(__($errorMsg));
-
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             throw new LocalizedException(__($e->getMessage()));
-
         }
-
     }
 
     /**
      * @param $order
      * @return bool
      */
-    public function compareAddress($order) {
+    public function compareAddress($order)
+    {
         $sA = $order->getShippingaddress()->getData();
         $bA = $order->getBillingaddress()->getData();
-        $useA = array('company','street','city','postcode','country_id');
+        $useA = array('company', 'street', 'city', 'postcode', 'country_id');
         $same = true;
-        foreach($useA as $key){
+        foreach ($useA as $key) {
 
-            if($sA[$key] != $bA[$key]){
+            if ($sA[$key] != $bA[$key]) {
                 $same = false;
                 break;
             }
