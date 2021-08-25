@@ -168,7 +168,6 @@ define([
                     })
                         .then(function success(ao) {
                             $('#payafterdelivery_widget_res').val(JSON.stringify(ao.debtor_company));
-                            console.log(ao.debtor_company);
                             self.placeOrder();
                         })
                         .catch(function failure(err) {
