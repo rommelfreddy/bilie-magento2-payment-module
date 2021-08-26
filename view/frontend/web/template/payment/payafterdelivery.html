@@ -37,7 +37,7 @@
                             data-validate="{'required-entry':true}"
                             data-bind=" attr: {id: getCode() + '_gender', 'data-container': getCode() + '_gender'},
                                         enable: true,
-                                        value: gender">
+                                        value: inputs.gender">
                         <option value=""><!-- ko i18n: '--Please Select--'--><!-- /ko --></option>
                         <option value="m"><!-- ko i18n: 'Male'--><!-- /ko --></option>
                         <option value="f"><!-- ko i18n: 'Female'--><!-- /ko --></option>
@@ -57,8 +57,7 @@
                                         id: getCode() + '_firstname',
                                         title: $t('name'),
                                         'data-container': getCode() + '-firstname'},
-                                  value: getFirstname(),
-                                  valueUpdate: 'keyup' "/>
+                                  value: inputs.firstname"/>
                 </div>
             </div>
             <div class="field number required">
@@ -72,8 +71,7 @@
                                         id: getCode() + '_lastname',
                                         title: $t('name'),
                                         'data-container': getCode() + '-lastname'},
-                                  value: getLastname(),
-                                  valueUpdate: 'keyup' "/>
+                                  value: inputs.lastname"/>
                 </div>
             </div>
             <div class="field number required">
@@ -87,13 +85,12 @@
                                         id: getCode() + '_company',
                                         title: $t('company'),
                                         'data-container': getCode() + '-company'},
-                                        value: getCompany(),
-                                  valueUpdate: 'keyup' "/>
+                                        value: inputs.company"/>
                 </div>
             </div>
         </form>
-        <input type="hidden" name="payment[token]" data-bind="attr: {'id': getCode()+'_token'}">
-        <input type="hidden" name="payment[widget_res]" data-bind="attr: {'id': getCode()+'_widget_res'}">
+        <input type="hidden" name="payment[token]" data-bind="value: inputs.token">
+        <input type="hidden" name="payment[widget_res]" data-bind="value: inputs.widget_res">
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
             <!-- ko template: getTemplate() --><!-- /ko -->
