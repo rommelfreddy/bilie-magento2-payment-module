@@ -93,13 +93,13 @@ class CreateOrder implements ObserverInterface
                 $shippingAddress->setData('country_id', $deliveryAddress->getCountryCode());
             }
 
-            $billieDebtorAddress = $billieOrder->getCompany()->getAddress();
+            $billieBillingAddress = $billieOrder->getBillingAddress();
             if ($billingAddress = $order->getBillingaddress()) { // there is no reason that the address could be null, just to be safe ;-)
                 $billingAddress->setData('company', $billieOrder->getCompany()->getName());
-                $billingAddress->setData('street', $billieDebtorAddress->getStreet() . ' ' . $billieDebtorAddress->getHouseNumber());
-                $billingAddress->setData('postcode', $billieDebtorAddress->getPostalCode());
-                $billingAddress->setData('city', $billieDebtorAddress->getCity());
-                $billingAddress->setData('country_id', $billieDebtorAddress->getCountryCode());
+                $billingAddress->setData('street', $billieBillingAddress->getStreet() . ' ' . $billieBillingAddress->getHouseNumber());
+                $billingAddress->setData('postcode', $billieBillingAddress->getPostalCode());
+                $billingAddress->setData('city', $billieBillingAddress->getCity());
+                $billingAddress->setData('country_id', $billieBillingAddress->getCountryCode());
             }
 
             $payment->setData('billie_reference_id', $billieOrder->getUuid());
