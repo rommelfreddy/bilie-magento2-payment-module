@@ -6,28 +6,26 @@ Based upon the contractual agreement with Billie, debtors have either 14, 30, 45
 
 If debtors do not settle their outstanding invoices on time, Billie also sends reminders to these debtors on the merchant’s behalf. Pay After Delivery is a white label solution so these letters are sent by Billie in the merchant’s own branding, and the relationship between Billie and the merchant is not disclosed. If a debtor declares bankruptcy, Billie fully covers this default for the merchant.
 
-## Usage of virtual IBANs 
+## Usage of virtual IBANs
 A virtual IBAN is generated for each new invoice. These IBANs are unique to a debtor and must be the only payment details displayed on the invoice which the debtor receives. Virtual IBANs are made available to the merchant after the successful creation of an order. They are essential to ensure Billie is able to efficiently and accurately match payments to invoices. Virtual IBANs ensure fast payout times and reliable payment reconciliations and help avoid unwarranted dunning.
 
 ## Requirements
-- PHP 7.2 or higher 
+- PHP 7.2 or higher
 - Magento 2.3 or higher
 
 ## Magento Installation
 
-Go to your installation directory of Magento 2 and perform the following commands<br/>
+Go to your installation directory of Magento 2 and perform the following commands
 
-`composer config repositories.billie git git@github.com:ozean12/magento2.git`<br>
-`composer require billiepayment/billie-payment-method`<br>
+```bash
+composer require billie/magento2-payment-module
+```
 
-
-`composer config repositories.billie git git@github.com:ozean12/billie-shop-plugin-sdk.git`<br>
-`composer require billie/api-php-sdk:dev-feature/oauth2`<br>
-
-Clear Magento Caches and login again<br/>
-`php bin/magento setup:upgrade`<br>
-`php bin/magento setup:di:compile`<br>
-`php bin/magento cache:clean`<br>
+Clear Magento Caches and login again
+```bash
+php bin/magento setup:upgrade
+php bin/magento setup:di:compile
+```
 
 
 Goto System -> Configuration -> Billie Core Config
@@ -47,7 +45,7 @@ Additional configuration<br/>
 Goto System -> Configuration -> Customer -> Create account -> enable Vat visibility in frontend<br/>
 Goto System -> Configuration -> Customer -> Customer address head -> Enable prefix and use for male one of (Male,Mister,Herr,Mann) and for female one of (Female,Miss,Frau)
 
-## Dokumentation
+## Documentation
 
 #### Billie orders:
 ![Billie Core Configuration](docs/img/billie_core_Billiepayment_menu.png)
@@ -61,9 +59,9 @@ Under Billie Payments -> Billie Order you find all orders made with Billie. You 
 * Rechnung an: order billing name
 * Firma: company name
 * Rechtsform: legal form
-* Billie Reference Id: Billie reference ID 
+* Billie Reference Id: Billie reference ID
 * Gesamt: billing grand total
-* Status: status of order 
+* Status: status of order
 * Aktion: link to order detail
 
 ![Billie Core Configuration](docs/img/billie_core_payment_history.png)
