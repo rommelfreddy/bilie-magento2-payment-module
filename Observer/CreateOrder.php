@@ -14,6 +14,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Model\Order;
 use Magento\Store\Model\ScopeInterface;
 
 class CreateOrder implements ObserverInterface
@@ -83,17 +84,17 @@ class CreateOrder implements ObserverInterface
 
             $order->setData('billie_reference_id', $billieOrder->getUuid());
 
-            $billieDebtorAddress = $billieOrder->getCompany()->getAddress();
-            if ($this->compareAddress($order) && ($shippingAddress = $order->getShippingaddress())) {
+            if (($shippingAddress = $order->getShippingaddress()) && $this->areOrderAdressesIdentical($order)) {
+                $deliveryAddress = $billieOrder->getDeliveryAddress();
                 $shippingAddress->setData('company', $billieOrder->getCompany()->getName());
-                $shippingAddress->setData('street', $billieDebtorAddress->getStreet() . ' ' . $billieDebtorAddress->getHouseNumber());
-                $shippingAddress->setData('postcode', $billieDebtorAddress->getPostalCode());
-                $shippingAddress->setData('city', $billieDebtorAddress->getCity());
-                $shippingAddress->setData('country_id', $billieDebtorAddress->getCountryCode());
+                $shippingAddress->setData('street', $deliveryAddress->getStreet() . ' ' . $deliveryAddress->getHouseNumber());
+                $shippingAddress->setData('postcode', $deliveryAddress->getPostalCode());
+                $shippingAddress->setData('city', $deliveryAddress->getCity());
+                $shippingAddress->setData('country_id', $deliveryAddress->getCountryCode());
             }
 
-            $billingAddress = $order->getBillingaddress();
-            if ($billingAddress) { // there is no reason that the address could be null, just to be safe ;-)
+            $billieDebtorAddress = $billieOrder->getCompany()->getAddress();
+            if ($billingAddress = $order->getBillingaddress()) { // there is no reason that the address could be null, just to be safe ;-)
                 $billingAddress->setData('company', $billieOrder->getCompany()->getName());
                 $billingAddress->setData('street', $billieDebtorAddress->getStreet() . ' ' . $billieDebtorAddress->getHouseNumber());
                 $billingAddress->setData('postcode', $billieDebtorAddress->getPostalCode());
@@ -129,23 +130,21 @@ class CreateOrder implements ObserverInterface
     }
 
     /**
-     * @param $order
+     * @param Order $order
      * @return bool
      */
-    public function compareAddress($order)
+    public function areOrderAdressesIdentical(Order $order)
     {
         $sA = $order->getShippingaddress()->getData();
         $bA = $order->getBillingaddress()->getData();
-        $useA = array('company', 'street', 'city', 'postcode', 'country_id');
-        $same = true;
+        $useA = ['company', 'street', 'city', 'postcode', 'country_id'];
         foreach ($useA as $key) {
-
-            if ($sA[$key] != $bA[$key]) {
-                $same = false;
-                break;
+            if ($sA[$key] !== $bA[$key]) {
+                return false;
             }
 
         }
-        return $same;
+
+        return true;
     }
 }
