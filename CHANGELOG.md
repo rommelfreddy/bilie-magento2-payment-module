@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add new SDK
 ## Fixed
 - add compatibility to Magento 2.4.x
+- admin configuration source model and config-path
 
 ## [1.0.3] - 2020-10-06
 ## Added
