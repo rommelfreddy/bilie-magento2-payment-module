@@ -42,7 +42,7 @@ class Collection extends LogCollection implements SearchResultInterface
     ) {
         parent::__construct(
             $entityFactory,
-//            $logger,
+            //            $logger,
             $fetchStrategy,
             $eventManager,
             $connection,

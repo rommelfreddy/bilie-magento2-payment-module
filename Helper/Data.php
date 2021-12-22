@@ -16,9 +16,9 @@ use Magento\Sales\Model\Order;
 
 class Data extends AbstractHelper
 {
-    const sandboxMode = 'payment/payafterdelivery/sandbox';
-    const duration = 'payment/payafterdelivery/duration';
-    const invoiceUrl = 'billie_core/config/invoice_url';
+    const XML_PATH_CONFIG_SANDBOX_MODE = 'payment/payafterdelivery/sandbox';
+    const XML_PATH_CONFIG_DURATION = 'payment/payafterdelivery/duration';
+    const XML_PATH_CONFIG_INVOICE_URL = 'billie_core/config/invoice_url';
 
     const PAYMENT_METHOD_CODE = 'payafterdelivery';
 
@@ -33,7 +33,6 @@ class Data extends AbstractHelper
         $this->json = $json;
     }
 
-
     /**
      * @deprecated
      */
@@ -45,29 +44,25 @@ class Data extends AbstractHelper
         );
     }
 
-
     /**
      * @param Order $order
      * @return \Billie\Sdk\Model\Request\CheckoutSessionConfirmRequestModel|null
      */
     public function createCheckoutSessionConfirmModel(Order $order)
     {
-
         $payment = $order->getPayment();
 
         $widgetResponse = $this->json->unserialize($payment->getAdditionalInformation('widget_res'));
 
         return (new CheckoutSessionConfirmRequestModel())
             ->setSessionUuid($payment->getAdditionalInformation('token'))
-            ->setDuration((int)$this->getConfig(self::duration))
+            ->setDuration((int)$this->getConfig(self::XML_PATH_CONFIG_DURATION))
             ->setCompany((new DebtorCompany($widgetResponse)))
             ->setAmount((new Amount())
                 ->setNet($order->getBaseGrandTotal() - $order->getBaseTaxAmount())
                 ->setGross($order->getBaseGrandTotal())
-                ->setTax($order->getBaseTaxAmount())
-            );
+                ->setTax($order->getBaseTaxAmount()));
     }
-
 
     public function getReduceOrderModel(Order $order)
     {
@@ -78,8 +73,7 @@ class Data extends AbstractHelper
             ->setAmount((new Amount())
                 ->setNet($newTotalAmount - $newTaxAmount)
                 ->setGross($newTotalAmount)
-                ->setTax($newTaxAmount)
-            );
+                ->setTax($newTaxAmount));
     }
 
     /**
@@ -90,7 +84,7 @@ class Data extends AbstractHelper
     {
         return (new ShipOrderRequestModel($order->getBillieReferenceId()))
             ->setInvoiceNumber($order->getInvoiceCollection()->getFirstItem()->getIncrementId())
-            ->setInvoiceUrl($this->getConfig(self::invoiceUrl) . '/' . $order->getIncrementId() . '.pdf');
+            ->setInvoiceUrl($this->getConfig(self::XML_PATH_CONFIG_INVOICE_URL) . '/' . $order->getIncrementId() . '.pdf');
     }
 
     /**
@@ -106,6 +100,6 @@ class Data extends AbstractHelper
 
     public function getMode()
     {
-        return $this->getConfig(self::sandboxMode);
+        return $this->getConfig(self::XML_PATH_CONFIG_SANDBOX_MODE);
     }
 }

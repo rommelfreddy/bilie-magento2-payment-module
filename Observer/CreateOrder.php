@@ -41,14 +41,12 @@ class CreateOrder implements ObserverInterface
      */
     private $scopeConfig;
 
-
     public function __construct(
         Data $helper,
         Log $billieLogger,
         ScopeConfigInterface $scopeConfig,
         BillieClientHelper $billieClientHelper
-    )
-    {
+    ) {
         $this->billieHelper = $helper;
         $this->billieLogger = $billieLogger;
         $this->scopeConfig = $scopeConfig;
@@ -116,7 +114,8 @@ class CreateOrder implements ObserverInterface
             // set increment id on billie gateway
             (new UpdateOrderRequest($billieClient))->execute(
                 (new UpdateOrderRequestModel($billieOrder->getUuid()))
-                    ->setOrderId($order->getIncrementId()));
+                ->setOrderId($order->getIncrementId())
+            );
 
             $this->billieLogger->billieLog($order, $confirmModel, $billieOrder);
 

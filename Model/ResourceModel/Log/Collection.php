@@ -13,6 +13,9 @@ class Collection extends AbstractCollection
      */
     public function _construct()
     {
-        $this->_init('Billiepayment\BilliePaymentMethod\Model\Log', 'Billiepayment\BilliePaymentMethod\Model\ResourceModel\Log');
+        $this->_init(
+            \Billiepayment\BilliePaymentMethod\Model\Log::class,
+            \Billiepayment\BilliePaymentMethod\Model\ResourceModel\Log::class
+        );
     }
 }

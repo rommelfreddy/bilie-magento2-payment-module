@@ -9,7 +9,6 @@
 
 namespace Billiepayment\BilliePaymentMethod\Model;
 
-
 use Billiepayment\BilliePaymentMethod\Helper\Data;
 
 class AdditionalConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface

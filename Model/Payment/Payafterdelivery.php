@@ -7,6 +7,7 @@
  */
 
 namespace Billiepayment\BilliePaymentMethod\Model\Payment;
+
 class Payafterdelivery extends \Magento\Payment\Model\Method\AbstractMethod
 {
     const PAYMENT_METHOD_PAYAFTERDELIVERY_CODE = 'payafterdelivery';

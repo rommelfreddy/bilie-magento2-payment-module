@@ -27,8 +27,7 @@ class Index extends Action
         Context $context,
         JsonFactory $jsonResultFactory,
         BillieClientHelper $billieClientHelper
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->jsonResultFactory = $jsonResultFactory;
         $this->billieClientHelper = $billieClientHelper;

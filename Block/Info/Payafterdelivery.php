@@ -6,6 +6,7 @@ use \Billiepayment\BilliePaymentMethod\Helper\Data;
 use \Magento\Framework\View\Element\Template;
 use \Magento\Framework\View\Element\Template\Context;
 use \Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
  * Class Info
@@ -78,16 +79,13 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
             $data[(string)__('VAT ID')] = $oInfo->getBillieTaxId();
         }
 
-
-
-
         if (null === $this->_paymentSpecificInformation) {
             if (null === $transport) {
                 $transport = new \Magento\Framework\DataObject();
             } elseif (is_array($transport)) {
                 $transport = new \Magento\Framework\DataObject($transport);
             }
-            $this->_paymentSpecificInformation = $transport->setData(array_merge($data, $transport->getData()));;
+            $this->_paymentSpecificInformation = $transport->setData(array_merge($data, $transport->getData()));
         }
         return $this->_paymentSpecificInformation;
     }
@@ -95,7 +93,6 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
     protected function isAdmin()
     {
         return true; // ('adminhtml' == $this->_state->getAreaCode());
-
     }
 
     protected function getStoreName()
@@ -114,18 +111,14 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
 
     public function getDuration()
     {
-
-
-        if ($this->is_shipped()) {
-
+        if ($this->isShipped()) {
             $info = $this->getInfo();
             $order = $info->getOrder();
             $shipping = $order->getShipmentsCollection()->getFirstItem();
             $date = strtotime($shipping->getCreatedAt());
-            $newDate = date('d.m.Y', strtotime( $this->getConfig('payment/payafterdelivery/duration') . " day", $date));
+            $newDate = date('d.m.Y', strtotime($this->getConfig('payment/payafterdelivery/duration') . " day", $date));
 
             $duration = $newDate;
-
         } else {
 
             $duration = __('Order is not shipped yet');
@@ -133,34 +126,28 @@ class Payafterdelivery extends \Magento\Payment\Block\Info
         }
 
         return $duration;
-
     }
 
-
-    protected function getInvoiceIncrementId($order){
-
+    protected function getInvoiceIncrementId($order)
+    {
         $invoiceIncrementId = '';
 
         $invoiceCollection = $order->getInvoiceCollection();
-        if(count($invoiceCollection) > 0){
+        if (count($invoiceCollection) > 0) {
             $invoice = $order->getInvoiceCollection()->getFirstItem();
             $invoiceIncrementId = $invoice->getIncrementId();
         }
 
         return $invoiceIncrementId;
-
     }
 
     public function getConfig($config_path)
     {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $conf = $objectManager
-            ->get('Magento\Framework\App\Config\ScopeConfigInterface')
-            ->getValue($config_path);
-        return $conf;
+        return $this->_scopeConfig->getValue($config_path);
     }
-    public function is_shipped() {
 
+    public function isShipped()
+    {
         $shipped = false;
         $info = $this->getInfo();
         $order = $info->getOrder();

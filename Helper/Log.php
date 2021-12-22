@@ -43,13 +43,13 @@ class Log extends AbstractHelper
         $state = null;
         if ($response instanceof Order) {
             $state = $response->getState();
-        } else if ($response instanceof BillieException) {
+        } elseif ($response instanceof BillieException) {
             $state = $response->getBillieCode() . ': ' . $response->getMessage();
-        } else if (is_string($response)) {
+        } elseif (is_string($response)) {
             $state = $response;
         }
 
-        $logData = array(
+        $logData = [
             'store_id' => $order->getStoreId(),
             'order_id' => $order->getId(),
             'reference_id' => $order->getBillieReferenceId(),
@@ -59,10 +59,9 @@ class Log extends AbstractHelper
             'billie_state' => $state,
             'mode' => $this->helper->getMode() ? 'sandbox' : 'live',
             'request' => $this->json->serialize($request->toArray())
-        );
+        ];
 
         $billieLogger->addData($logData);
         $billieLogger->save();
     }
-
 }

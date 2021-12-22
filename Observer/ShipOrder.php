@@ -33,8 +33,7 @@ class ShipOrder implements ObserverInterface
         Data $billieHelper,
         BillieClientHelper $billieClientHelper,
         Log $billieLogger
-    )
-    {
+    ) {
         $this->billieHelper = $billieHelper;
         $this->billieLogger = $billieLogger;
         $this->billieClientHelper = $billieClientHelper;

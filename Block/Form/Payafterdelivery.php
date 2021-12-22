@@ -12,5 +12,4 @@ class Payafterdelivery extends \Magento\Payment\Block\Form
 {
 
     protected $_template = 'form/Payafterdelivery.phtml';
-
 }

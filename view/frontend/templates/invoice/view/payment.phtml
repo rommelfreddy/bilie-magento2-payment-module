@@ -11,14 +11,14 @@
 $specificInfo = $block->getSpecificInformation();
 ?>
 <?= $block->escapeHtml($block->getMethod()->getTitle()) ?>
-<?php if($block->is_shipped()): ?>
+<?php if ($block->isShipped()): ?>
 <div>
-    <?php echo __('Bitte überweisen Sie den Rechnungsbetrag bis zum %1 unter Angabe des Rechnungsnummer auf folgendes Konto:', $block->getDuration()) ?>
+    <?= /* @noEscape */ __('Bitte überweisen Sie den Rechnungsbetrag bis zum %1 unter Angabe des Rechnungsnummer auf folgendes Konto:', $block->getDuration()) ?>
 </div>
 <?php endif ?>
-<?php if ($specificInfo) : ?>
+<?php if ($specificInfo): ?>
     <table class="data-table admin__table-secondary">
-        <?php foreach ($specificInfo as $label => $value) : ?>
+        <?php foreach ($specificInfo as $label => $value): ?>
             <tr>
                 <th><?= $block->escapeHtml($label) ?>:</th>
                 <td>
@@ -28,7 +28,7 @@ $specificInfo = $block->getSpecificInformation();
         <?php endforeach; ?>
     </table>
 <?php endif;?>
-<?php if($block->is_shipped()): ?>
-    <?php echo __('Bitte beachten Sie, dass Ihre Rechnung nur dann beglichen ist, wenn Ihre Zahlung auf das oben genannte Konto erfolgt.') ?>
+<?php if ($block->isShipped()): ?>
+    <?= /* @noEscape */ __('Bitte beachten Sie, dass Ihre Rechnung nur dann beglichen ist, wenn Ihre Zahlung auf das oben genannte Konto erfolgt.') ?>
 <?php endif ?>
 <?= $block->getChildHtml() ?>

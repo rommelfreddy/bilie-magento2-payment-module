@@ -3,7 +3,6 @@
 
 namespace Billiepayment\BilliePaymentMethod\Helper;
 
-
 use Billie\Sdk\Util\BillieClientFactory;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -11,11 +10,6 @@ use Magento\Store\Model\ScopeInterface;
 
 class BillieClientHelper extends AbstractHelper
 {
-
-    public function __construct(Context $context)
-    {
-        parent::__construct($context);
-    }
 
     /**
      * @return \Billie\Sdk\HttpClient\BillieClient
@@ -29,5 +23,4 @@ class BillieClientHelper extends AbstractHelper
             (bool)(int)$this->scopeConfig->getValue('payment/payafterdelivery/sandbox', ScopeInterface::SCOPE_WEBSITE)
         );
     }
-
 }

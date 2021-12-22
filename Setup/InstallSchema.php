@@ -6,7 +6,6 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
-
 class InstallSchema implements InstallSchemaInterface
 {
     /**
@@ -23,40 +22,47 @@ class InstallSchema implements InstallSchemaInterface
         if ($setup->getConnection()->isTableExists($tableName) != true) {
             $table = $setup->getConnection()
                 ->newTable($tableName)
-                ->addColumn('entity_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, array(
+                ->addColumn('entity_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, [
                     'identity' => true,
                     'unsigned' => true,
                     'nullable' => false,
                     'primary' => true,
-                ), 'Log Id')
-                ->addColumn('store_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, array(
+                ], 'Log Id')
+                ->addColumn('store_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, [
                     'unsigned' => true,
-                ), 'Store Id')
-                ->addColumn('order_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, array(
+                ], 'Store Id')
+                ->addColumn('order_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, [
                     'unsigned' => true,
-                ), 'Order Id')
-                ->addColumn('reference_id', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 64, array(
+                ], 'Order Id')
+                ->addColumn('reference_id', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 64, [
                     'nullable' => false,
-                ), 'Billie Reference Ids')
-                ->addColumn('transaction_tstamp', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 64, array(
+                ], 'Billie Reference Ids')
+                ->addColumn('transaction_tstamp', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 64, [
                     'nullable' => true,
-                ), 'transaction at')
-                ->addColumn('created_at', \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP, null,
-                    array('default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT_UPDATE), 'created at')
-                ->addColumn('customer_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, array(
+                ], 'transaction at')
+                ->addColumn(
+                    'created_at',
+                    \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+                    null,
+                    ['default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT_UPDATE],
+                    'created at'
+                )
+                ->addColumn('customer_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, [
                     'unsigned' => true,
-                ), 'Customer Id')
-                ->addColumn('mode', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 12, array(
+                ], 'Customer Id')
+                ->addColumn('mode', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 12, [
                     'nullable' => true,
-                ), 'transaction mode')
-                ->addColumn('billie_state', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 12, array(
+                ], 'transaction mode')
+                ->addColumn('billie_state', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 12, [
                     'nullable' => true,
-                ), 'billie state')
-                ->addColumn('request', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 255, array(
+                ], 'billie state')
+                ->addColumn('request', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 255, [
                     'nullable' => false,
-                ), 'transaction at')
-                ->addIndex($setup->getIdxName('billie_transaction_log', array('customer_id')),
-                    array('customer_id'))
+                ], 'transaction at')
+                ->addIndex(
+                    $setup->getIdxName('billie_transaction_log', ['customer_id']),
+                    ['customer_id']
+                )
                 ->addForeignKey(
                     $setup->getFkName('billie_transaction_log', 'customer_id', 'customer/entity', 'entity_id'),
                     'customer_id',

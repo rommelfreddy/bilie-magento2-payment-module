@@ -63,7 +63,7 @@ class UpdateOrder implements ObserverInterface
 
                 if ($billieOrder->getState() === Order::STATE_COMPLETED) {
                     throw new LocalizedException(__('This transaction is already completed, refunds with billie payment are not possible anymore'));
-                } else if ($billieOrder->getState() === Order::STATE_CANCELLED) {
+                } elseif ($billieOrder->getState() === Order::STATE_CANCELLED) {
                     throw new LocalizedException(__('This transaction is already canceled, refunds with billie payment are not possible anymore'));
                 }
 

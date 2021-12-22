@@ -13,15 +13,13 @@ class Config extends \Magento\Framework\View\Element\Template
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Billiepayment\BilliePaymentMethod\Helper\Data $helper
-
     ) {
         parent::__construct($context);
         $this->helper = $helper;
     }
 
-    public function getBillieSrc(){
-       return ($this->helper->getMode())?self::SANDBOX_BASE_URL:self::PRODUCTION_BASE_URL;
-
+    public function getBillieSrc()
+    {
+        return ($this->helper->getMode())?self::SANDBOX_BASE_URL:self::PRODUCTION_BASE_URL;
     }
-
 }
