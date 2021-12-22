@@ -16,72 +16,30 @@ A virtual IBAN is generated for each new invoice. These IBANs are unique to a de
 ## Magento Installation
 
 Go to your installation directory of Magento 2 and perform the following commands
-
 ```bash
 composer require billie/magento2-payment-module
 ```
 
-Clear Magento Caches and login again
+Run the following commands to update the Magento database and to generate the interceptors:
 ```bash
-php bin/magento setup:upgrade
-php bin/magento setup:di:compile
+bin/magento setup:upgrade
 ```
 
+If your system is in the `production` mode you have to run the following commands:
+```bash
+bin/magento setup:di:compile
+bin/magento setup:static-content:deploy # add your specific options which meets your environment
+```
 
-Goto System -> Configuration -> Billie Core Config
-![Billie Core Configuration](docs/img/billie_core_config_select.png)
+## Magento Configuration
 
-Select a field for housenumber if it is a separate field and set your invoice URL<br/>
-![Billie Core Configuration](docs/img/billie_core_config.png)
+You have to set up the API credentials for the payment method.
 
-Goto Paymentmethods and configure Billie PayAfterDelivery method.<br/>
-![Billie Core Configuration](docs/img/billie_core_payment.png)
-
-Make sure your company name is set in System -> Configuration -> General -> General -> Imprint -> Company 1
-
-Ready to go
-
-Additional configuration<br/>
-Goto System -> Configuration -> Customer -> Create account -> enable Vat visibility in frontend<br/>
-Goto System -> Configuration -> Customer -> Customer address head -> Enable prefix and use for male one of (Male,Mister,Herr,Mann) and for female one of (Female,Miss,Frau)
-
-## Documentation
-
-#### Billie orders:
-![Billie Core Configuration](docs/img/billie_core_Billiepayment_menu.png)
-
-
-Under Billie Payments -> Billie Order you find all orders made with Billie. You can sort and filter the columns as needed. The grid contains the following data<br/>
-
-* Bestellung: magento order increment_id
-* Bestellt in (Store): Storeview
-* Bestellt am: order create date
-* Rechnung an: order billing name
-* Firma: company name
-* Rechtsform: legal form
-* Billie Reference Id: Billie reference ID
-* Gesamt: billing grand total
-* Status: status of order
-* Aktion: link to order detail
-
-![Billie Core Configuration](docs/img/billie_core_payment_history.png)
-
-#### Order Detail
-
-In order detail you find the payment information block. Where you can find find the payment information for the client.
-![Billie Core Configuration](docs/img/billie_core_order.png)
-
-In comment history you can find all billie actions only viewable for the admin
-![Billie Core Configuration](docs/img/billie_core_order_history.png)
-
-Before Billie is invoicing the client. The order has to be invoiced and shipped. There for use the magento default buttons.
-![Billie Core Configuration](docs/img/billie_core_order_actions.png)
-
-You can cancel an order with the Magento default cancel button. Notice that an order which is already paid back by the debtor can't be canceled with Billie anymore.
+1. Please navigate to `Stores > Configuration > Sales > Payment Methods > Billie Rechnungskauf`.
+2. In this configuration, you can enter the credentials and enable the payment method.
+3. Clear/flush Magento cache
 
 ## Contact
 Billie GmbH<br/>
 Charlottenstraße 4<br/>
 10969 Berlin<br/>
-
-## License
