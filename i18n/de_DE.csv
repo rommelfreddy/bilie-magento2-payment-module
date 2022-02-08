@@ -36,3 +36,5 @@
 "You have to create a invoice first","You have to create a invoice first"
 "Bitte überweisen Sie den Rechnungsbetrag bis zum %1 unter Angabe des Rechnungsnummer auf folgendes Konto:","Bitte überweisen Sie den Rechnungsbetrag bis zum %1 unter Angabe des Rechnungsnummer auf folgendes Konto:"
 "Bitte beachten Sie, dass Ihre Rechnung nur dann beglichen ist, wenn Ihre Zahlung auf das oben genannte Konto erfolgt.","Bitte beachten Sie, dass Ihre Rechnung nur dann beglichen ist, wenn Ihre Zahlung auf das oben genannte Konto erfolgt."
+"An unknown error occurred. Please try again.","Es ist ein unbekannter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+"This payment can not be performed currently. Place contact the vendor.","Diese Zahlung kann derzeit nicht ausgeführt werden. Bitte kontaktieren Sie den Händler."

@@ -8,4 +8,7 @@
     <event name="payment_method_assign_data_payafterdelivery">
         <observer name="payafterdelivery_payment_gateway_data_assign"  instance="Billiepayment\BilliePaymentMethod\Observer\AssignData" />
     </event>
+    <event name="payment_method_is_active">
+        <observer name="billie_payment_method_available"  instance="Billiepayment\BilliePaymentMethod\Observer\PaymentMethodAvailable" />
+    </event>
 </config>

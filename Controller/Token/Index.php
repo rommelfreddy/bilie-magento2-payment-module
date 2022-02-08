@@ -3,40 +3,56 @@
 namespace Billiepayment\BilliePaymentMethod\Controller\Token;
 
 use Billie\Sdk\Exception\BillieException;
+use Billie\Sdk\Exception\UserNotAuthorizedException;
 use Billie\Sdk\Model\Request\CreateSessionRequestModel;
 use Billie\Sdk\Service\Request\CreateSessionRequest;
 use Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Psr\Log\LoggerInterface;
 
-class Index extends Action
+class Index implements ActionInterface
 {
 
     /**
-     * @var \Magento\Framework\Controller\Result\JsonFactory
+     * @var RequestInterface
+     */
+    private $request;
+
+    /**
+     * @var JsonFactory
      */
     private $jsonResultFactory;
 
     /**
-     * @var \Billiepayment\BilliePaymentMethod\Helper\BillieClientHelper
+     * @var BillieClientHelper
      */
     private $billieClientHelper;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
-        Context $context,
-        JsonFactory $jsonResultFactory,
-        BillieClientHelper $billieClientHelper
-    ) {
-        parent::__construct($context);
+        Context            $context,
+        JsonFactory        $jsonResultFactory,
+        BillieClientHelper $billieClientHelper,
+        LoggerInterface    $logger
+    )
+    {
+        $this->request = $context->getRequest();
         $this->jsonResultFactory = $jsonResultFactory;
         $this->billieClientHelper = $billieClientHelper;
+        $this->logger = $logger;
     }
 
     public function execute()
     {
         $result = $this->jsonResultFactory->create();
-        $merchantCustomerId = $this->_request->getParam('merchant_customer_id');
+        $merchantCustomerId = $this->request->getParam('merchant_customer_id');
 
         try {
             $request = new CreateSessionRequest($this->billieClientHelper->getBillieClientInstance());
@@ -49,7 +65,13 @@ class Index extends Action
         } catch (BillieException $e) {
             $result->setData([
                 'status' => false,
-                'session_id' => $e->getMessage()
+                'message' => $e instanceof UserNotAuthorizedException ? __('This payment can not be performed currently. Place contact the vendor.') : $e->getMessage()
+            ]);
+            $result->setHttpResponseCode(500);
+
+            $logError = $e instanceof UserNotAuthorizedException ? 'Please verify the api credentials.' : $e->getMessage();
+            $this->logger->critical('Billie payment can not be initialized: ' . $logError, [
+                'error_code' => $e->getBillieCode()
             ]);
         }
 

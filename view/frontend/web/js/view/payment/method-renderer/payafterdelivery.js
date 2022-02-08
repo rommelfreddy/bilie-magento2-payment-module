@@ -6,8 +6,10 @@ define([
     'Magento_Customer/js/model/customer',
     'Magento_Ui/js/model/messageList',
     'mage/url',
+    'Magento_Ui/js/modal/alert',
+    'mage/translate',
     'mage/validation',
-], function ($, ko, Component, quote, customer, globalMessageList, urlBuilder) {
+], function ($, ko, Component, quote, customer, globalMessageList, urlBuilder, alert, $t) {
     'use strict';
     var billie_config_data = {};
 
@@ -167,7 +169,17 @@ define([
                         this.inputs.widget_res(JSON.stringify(ao.debtor_company));
                         self.placeOrder();
                     }).catch(function failure(err) {
+                        alert({
+                            title: $t('Error'),
+                            content: $t('An unknown error occurred. Please try again.')
+                        });
                         console.log('Error occurred', err);
+                    });
+                },
+                error: (xhr) => {
+                    alert({
+                        title: $t('Error'),
+                        content: xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : $t('An unknown error occurred. Please try again.')
                     });
                 }
             });

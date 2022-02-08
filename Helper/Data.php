@@ -19,6 +19,8 @@ class Data extends AbstractHelper
     const XML_PATH_CONFIG_SANDBOX_MODE = 'payment/payafterdelivery/sandbox';
     const XML_PATH_CONFIG_DURATION = 'payment/payafterdelivery/duration';
     const XML_PATH_CONFIG_INVOICE_URL = 'billie_core/config/invoice_url';
+    const XML_PATH_CONFIG_CONSUMER_KEY = 'payment/payafterdelivery/consumer_key';
+    const XML_PATH_CONFIG_CONSUMER_SECRET_KEY = 'payment/payafterdelivery/consumer_secret_key';
 
     const PAYMENT_METHOD_CODE = 'payafterdelivery';
 
