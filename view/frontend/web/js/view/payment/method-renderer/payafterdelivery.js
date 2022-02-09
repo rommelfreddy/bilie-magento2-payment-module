@@ -94,9 +94,9 @@ define([
                     "external_id": item.product_id,
                     "title": item.name,
                     "quantity": item.qty,
-                    "description": item.description,
-                    "brand": item.manufacturer,
-                    "category": item.category,
+                    "description": item.billie_additional_data ? item.billie_additional_data.description : null,
+                    "brand": item.billie_additional_data ? item.billie_additional_data.manufacturer : null,
+                    "category":  item.billie_additional_data ? item.billie_additional_data.category : null,
                     "amount": {
                         "net": (Number(item.base_price_incl_tax) - (Number(item.base_discount_amount) / item.qty) - Number(item.tax_amount)).toFixed(2),
                         "gross": (Number(item.base_price_incl_tax) - (Number(item.base_discount_amount) / item.qty)).toFixed(2),

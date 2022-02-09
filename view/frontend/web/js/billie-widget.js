@@ -1,4 +1,3 @@
-var bcwSrc = 'https://static-paella-sandbox.billie.io/checkout/billie-checkout.js';
 (function (w, d, s, o, f, js, fjs) {
     w['BillieCheckoutWidget'] = o;
     w[o] = w[o] || function () {
@@ -13,4 +12,4 @@ var bcwSrc = 'https://static-paella-sandbox.billie.io/checkout/billie-checkout.j
     js.async = 1;
     fjs.parentNode.insertBefore(js, fjs);
     bcw('init');
-}(window, document, 'script', 'bcw', bcwSrc));
+}(window, document, 'script', 'bcw', window.checkoutConfig.billie_payment.config.widget_url));
