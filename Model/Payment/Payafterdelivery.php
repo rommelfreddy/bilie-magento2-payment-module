@@ -29,6 +29,11 @@ class Payafterdelivery extends \Magento\Payment\Model\Method\AbstractMethod
      */
     protected $_infoBlockType = \Billiepayment\BilliePaymentMethod\Block\Info\Payafterdelivery::class;
 
+    /**
+     * Disable method for admin order
+     * @var bool
+     */
+    protected $_canUseInternal = false;
 //    /**
 //     * Availability option
 //     *
