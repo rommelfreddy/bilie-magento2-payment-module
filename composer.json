@@ -1,7 +1,6 @@
 {
     "name": "billie/magento2-payment-module",
     "description": "Billie Paymentmethod Pay After delivery",
-    "version": "2.0.0",
     "type": "magento2-module",
     "license": "MIT",
     "autoload": {
