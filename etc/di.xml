@@ -15,6 +15,6 @@
         </arguments>
     </virtualType>
     <type name="Magento\Checkout\Model\DefaultConfigProvider">
-        <plugin name="checkout-summary-product-attribute" type="Billiepayment\BilliePaymentMethod\Model\DefaultConfigProvider" />
+        <plugin name="billie-payment-config-provider" type="Billiepayment\BilliePaymentMethod\Model\DefaultConfigProvider" />
     </type>
 </config>
