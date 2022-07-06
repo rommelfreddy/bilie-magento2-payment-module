@@ -1,6 +1,6 @@
 <?php
 
-namespace Billiepayment\BilliePaymentMethod\Model\ResourceModel\log;
+namespace Billiepayment\BilliePaymentMethod\Model\ResourceModel\Log;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
