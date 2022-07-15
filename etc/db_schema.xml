@@ -23,7 +23,7 @@
                     column="store_id"
                     referenceTable="store"
                     referenceColumn="store_id"
-                    onDelete="CASCADE"/>
+                    onDelete="SET NULL"/>
 
         <constraint xsi:type="foreign"
                     referenceId="FK_BILLIE_LOG_ORDER"
@@ -31,7 +31,7 @@
                     column="order_id"
                     referenceTable="sales_order"
                     referenceColumn="entity_id"
-                    onDelete="CASCADE"/>
+                    onDelete="SET NULL"/>
 
         <constraint xsi:type="foreign"
                     referenceId="FK_BILLIE_LOG_CUSTOMER_ENTITY_ID"
@@ -39,7 +39,7 @@
                     column="customer_id"
                     referenceTable="customer_entity"
                     referenceColumn="entity_id"
-                    onDelete="CASCADE"/>
+                    onDelete="SET NULL"/>
     </table>
 
     <table name="quote">
