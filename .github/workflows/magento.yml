@@ -32,7 +32,7 @@ jobs:
                     tools: composer:v1
 
             -   name: Validate composer.json and composer.lock
-                run: composer validate
+
 
             -   name: Runs Elasticsearch
                 uses: elastic/elastic-github-actions/elasticsearch@master
@@ -60,6 +60,7 @@ jobs:
 
             -   name: Install module
                 run: |
+                    composer validate -d /tmp/build/_github/billie-payment
                     composer require --ignore-platform-reqs billie/magento2-payment-module -d /tmp/build
 
             -   name: Install Magento
