@@ -60,9 +60,9 @@ jobs:
             -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
                 name: Setup composer local repo
                 run: |
-                    composer config repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }' -d magento/
-                    composer config minimum-stability dev -d magento/
-                    composer config prefer-stable true -d magento/
+                    composer config -d magento/ repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }' -d magento/
+                    composer config -d magento/ minimum-stability dev
+                    composer config -d magento/ prefer-stable true
 
             -   uses: actions/checkout@v2
                 with:
@@ -71,7 +71,7 @@ jobs:
             -   name: Install module
                 run: |
                     composer validate -d magento/_github/billie-payment
-                    composer require billie/magento2-payment-module -d magento/
+                    composer require -d magento/ billie/magento2-payment-module
 
             -   name: PHP Syntax Checker
                 run: find magento/_github/billie-payment -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
