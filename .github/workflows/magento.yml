@@ -1,0 +1,88 @@
+name: Build and Test
+
+on: [ push, pull_request, workflow_dispatch ]
+
+jobs:
+    build:
+
+        runs-on: ubuntu-latest
+        strategy:
+            max-parallel: 15
+            fail-fast: false
+            matrix:
+                operating-system: [ ubuntu-latest ]
+                php-versions: [ '7.4' ]
+                magento-versions: [ '2.3.0', '2.4.0' ]
+
+        services:
+            mysql:
+                image: mysql:8.0.20
+                env:
+                    MYSQL_ROOT_PASSWORD: root
+                ports:
+                    - 3306:3306
+
+        steps:
+
+            -   name: Install PHP
+                uses: shivammathur/setup-php@master
+                with:
+                    php-version: ${{ matrix.php-versions }}
+                    extensions: mbstring, gd, bcmath, ctype, curl, dom, hash, iconv, intl, openssl, simplexml, soap, xsl, zip
+                    tools: composer:v1
+
+            -   name: Validate composer.json and composer.lock
+                run: composer validate
+
+            -   name: Runs Elasticsearch
+                uses: elastic/elastic-github-actions/elasticsearch@master
+                with:
+                    stack-version: 7.6.0
+
+            -   name: PHP Syntax Checker
+                run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
+
+            -   name: Download Magento
+                run: |
+                    mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
+                    git clone --depth=1 -b ${{ matrix.magento-versions }} https://github.com/magento/magento2 /tmp/build
+                    composer update -d /tmp/build
+
+            -   name: Setup composer local repo
+                run: |
+                    composer config repositories.github '{ \"type\": \"path\", \"url\": \"_github/*\", \"options\": { \"symlink\": true } }' -d /tmp/build
+                    composer config minimum-stability dev -d /tmp/build
+                    composer config prefer-stable true -d /tmp/build
+
+            -   uses: actions/checkout@v2
+                with:
+                    path: /tmp/build/_github/billie-payment
+
+            -   name: Install module
+                run: |
+                    composer require --ignore-platform-reqs billie/magento2-payment-module -d /tmp/build
+
+            -   name: Install Magento
+                run: |
+                    cd /tmp/build
+                    php bin/magento setup:install \
+                        --base-url=http://magento.local/ \
+                        --db-host=127.0.0.1 \
+                        --db-name=magento \
+                        --db-user=root \
+                        --db-password=root \
+                        --admin-firstname=Github \
+                        --admin-lastname=actions \
+                        --admin-email=github-actions@localhost.local \
+                        --admin-user=GithubActions \
+                        --admin-password=GithubActions123 \
+                        --language=de_DE \
+                        --currency=EUR \
+                        --timezone=Europe/Berlin \
+                        --search-engine=elasticsearch7 \
+                        --elasticsearch-host=localhost \
+                        --elasticsearch-port=9200
+
+                    php bin/magento setup:upgrade
+                    php bin/magento setup:di:compile
+                    php bin/magento cache:clean
