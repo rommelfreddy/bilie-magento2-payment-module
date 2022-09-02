@@ -2,6 +2,9 @@ name: Build and Test
 
 on: [ push, pull_request, workflow_dispatch ]
 
+env:
+    COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+
 jobs:
     build:
 
@@ -42,7 +45,7 @@ jobs:
             -   name: Download Magento
                 run: |
                     mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
-                    composer create-project --repository-url=https://${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }}:${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }}@repo.magento.com/ magento/project-community-edition /tmp/build
+                    composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition /tmp/build
 
             -   name: Setup composer local repo
                 run: |
