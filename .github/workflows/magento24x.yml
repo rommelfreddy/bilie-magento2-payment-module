@@ -65,7 +65,7 @@ jobs:
             -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
                 name: Setup composer local repo
                 run: |
-                    composer config -d magento/ repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }' -d magento/
+                    composer config -d magento/ repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }'
                     composer config -d magento/ minimum-stability dev
                     composer config -d magento/ prefer-stable true
 
