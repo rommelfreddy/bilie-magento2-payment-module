@@ -3,7 +3,7 @@ name: Build and Test
 on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
-    build:
+    magento23x:
 
         runs-on: ubuntu-latest
         strategy:
@@ -49,7 +49,7 @@ jobs:
                 name: Download Magento
                 run: |
                     mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
-                    composer create-project --ignore-platform-reqs --repository-url=https://repo.magento.com/ magento/project-community-edition:${{ matrix.magento-version }} magento/
+                    composer create-project --no-interaction --ignore-platform-reqs --repository-url=https://repo.magento.com/ magento/project-community-edition:${{ matrix.magento-version }} magento/
 
             -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
                 name: Setup composer local repo
