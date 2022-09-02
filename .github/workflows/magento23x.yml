@@ -19,10 +19,15 @@ jobs:
                 image: mysql:8.0.20
                 env:
                     MYSQL_ROOT_PASSWORD: root
+                    MYSQL_DATABASE: magento
                 ports:
                     - 3306:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
         steps:
+            -   name: Verify test DB exists
+                run: mysql --host 127.0.0.1 --port 3306 -uroot -proot -e "SHOW DATABASES LIKE 'magento'"
+
             -   name: Add auth credentials for composer
                 run: |
                     composer config --global http-basic.repo.magento.com ${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }} ${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }} --auth
@@ -47,7 +52,6 @@ jobs:
             -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
                 name: Download Magento
                 run: |
-                    mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
                     composer create-project --no-interaction --ignore-platform-reqs --repository-url=https://repo.magento.com/ magento/project-community-edition:${{ matrix.magento-version }} magento/
 
             -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
