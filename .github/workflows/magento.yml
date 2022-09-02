@@ -2,9 +2,6 @@ name: Build and Test
 
 on: [ push, pull_request, workflow_dispatch ]
 
-env:
-    COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
-
 jobs:
     build:
 
@@ -27,6 +24,9 @@ jobs:
                     - 3306:3306
 
         steps:
+            -   name: Add auth credentials for composer
+                run: composer config --global http-basic.repo.magento.com ${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }} ${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }} --auth
+
             -   name: Install PHP
                 uses: shivammathur/setup-php@master
                 with:
