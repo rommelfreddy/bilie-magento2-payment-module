@@ -26,7 +26,7 @@ jobs:
         steps:
             -   name: Add auth credentials for composer
                 run: |
-                    composer config --global repositories.github '{ "type": "vcs", "url": "repo.magento.com" }'
+                    composer config --global repositories.repo.magento.com '{ "type": "vcs", "url": "repo.magento.com" }'
                     composer config --global http-basic.repo.magento.com ${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }} ${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }} --auth
 
             -   name: Install PHP
