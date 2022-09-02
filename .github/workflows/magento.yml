@@ -34,6 +34,7 @@ jobs:
                     php-version: ${{ matrix.php-version }}
                     extensions: mbstring, gd, bcmath, ctype, curl, dom, hash, iconv, intl, openssl, simplexml, soap, xsl, zip
                     tools: composer:v${{ matrix.composer-version }}
+                    coverage: none
 
             -   name: Runs Elasticsearch
                 uses: elastic/elastic-github-actions/elasticsearch@master
