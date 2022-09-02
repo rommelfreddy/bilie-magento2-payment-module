@@ -36,11 +36,6 @@ jobs:
                     tools: composer:v${{ matrix.composer-version }}
                     coverage: none
 
-            -   name: Runs Elasticsearch
-                uses: elastic/elastic-github-actions/elasticsearch@master
-                with:
-                    stack-version: 7.6.0
-
             -   name: Cache Magento Source
                 id: cache-magento
                 uses: actions/cache@v3

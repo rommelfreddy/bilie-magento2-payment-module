@@ -1,0 +1,98 @@
+name: Build and Test
+
+on: [ push, pull_request, workflow_dispatch ]
+
+jobs:
+    build:
+
+        runs-on: ubuntu-latest
+        strategy:
+            max-parallel: 15
+            fail-fast: false
+            matrix:
+                operating-system: [ ubuntu-latest ]
+                magento-version: ['2.4.0', '2.4.1', '2.4.2', '2.4.3']
+                php-version: ['7.4']
+                composer-version: ['2']
+
+        services:
+            mysql:
+                image: mysql:8.0.20
+                env:
+                    MYSQL_ROOT_PASSWORD: root
+                ports:
+                    - 3306:3306
+
+        steps:
+            -   name: Add auth credentials for composer
+                run: |
+                    composer config --global http-basic.repo.magento.com ${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }} ${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }} --auth
+
+            -   name: Install PHP
+                uses: shivammathur/setup-php@master
+                with:
+                    php-version: ${{ matrix.php-version }}
+                    extensions: mbstring, gd, bcmath, ctype, curl, dom, hash, iconv, intl, openssl, simplexml, soap, xsl, zip
+                    tools: composer:v${{ matrix.composer-version }}
+                    coverage: none
+
+            -   name: Runs Elasticsearch
+                uses: elastic/elastic-github-actions/elasticsearch@master
+                with:
+                    stack-version: 7.6.0
+
+            -   name: Cache Magento Source
+                id: cache-magento
+                uses: actions/cache@v3
+                with:
+                    path: magento
+                    key: magento-cache-${{ matrix.magento-version }}-${{ matrix.php-version }}-${{ matrix.composer-version }}
+                    restore-keys: |
+                        magento-cache-${{ matrix.magento-version }}-${{ matrix.php-version }}-${{ matrix.composer-version }}
+
+            -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
+                name: Download Magento
+                run: |
+                    mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
+                    composer create-project --ignore-platform-reqs --repository-url=https://repo.magento.com/ magento/project-community-edition:${{ matrix.magento-version }} magento/
+
+            -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
+                name: Setup composer local repo
+                run: |
+                    composer config repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }' -d magento/
+                    composer config minimum-stability dev -d magento/
+                    composer config prefer-stable true -d magento/
+
+            -   uses: actions/checkout@v2
+                with:
+                    path: magento/_github/billie-payment
+
+            -   name: Install module
+                run: |
+                    composer validate -d magento/_github/billie-payment
+                    composer require --ignore-platform-reqs billie/magento2-payment-module -d magento/
+
+            -   name: PHP Syntax Checker
+                run: find magento/_github/billie-payment -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
+
+            -   name: Install Magento
+                run: |
+                    cd magento/
+                    php bin/magento setup:install \
+                        --base-url=http://magento.local/ \
+                        --db-host=127.0.0.1 \
+                        --db-name=magento \
+                        --db-user=root \
+                        --db-password=root \
+                        --admin-firstname=Github \
+                        --admin-lastname=actions \
+                        --admin-email=github-actions@localhost.local \
+                        --admin-user=GithubActions \
+                        --admin-password=GithubActions123 \
+                        --language=de_DE \
+                        --currency=EUR \
+                        --timezone=Europe/Berlin
+
+                    php bin/magento setup:upgrade
+                    php bin/magento setup:di:compile
+                    php bin/magento cache:clean
