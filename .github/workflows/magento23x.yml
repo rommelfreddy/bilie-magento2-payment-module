@@ -52,7 +52,7 @@ jobs:
             -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
                 name: Download Magento
                 run: |
-                    composer create-project --no-interaction --ignore-platform-reqs --repository-url=https://repo.magento.com/ magento/project-community-edition:${{ matrix.magento-version }} magento/
+                    composer create-project --no-interaction --ignore-platform-reqs=hhvm --repository-url=https://repo.magento.com/ magento/project-community-edition:${{ matrix.magento-version }} magento/
 
             -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
                 name: Setup composer local repo
@@ -68,7 +68,7 @@ jobs:
             -   name: Install module
                 run: |
                     composer validate -d magento/_github/billie-payment
-                    composer require --ignore-platform-reqs billie/magento2-payment-module -d magento/
+                    composer require --ignore-platform-reqs=hhvm billie/magento2-payment-module -d magento/
 
             -   name: PHP Syntax Checker
                 run: find magento/_github/billie-payment -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
