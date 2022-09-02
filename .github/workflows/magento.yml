@@ -72,7 +72,7 @@ jobs:
                     composer require --ignore-platform-reqs billie/magento2-payment-module -d magento/
 
             -   name: PHP Syntax Checker
-                run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
+                run: find magento/_github/billie-payment -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
 
             -   name: Install Magento
                 run: |
