@@ -25,7 +25,8 @@ jobs:
 
         steps:
             -   name: Add auth credentials for composer
-                run: composer config --global repo.magento.com ${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }} ${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }}
+                run: |
+                    echo '{ "http-basic": { "repo.magento.com": { "username": "${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }}", "password": "${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }}"} } }' > ~/.composer/auth.json
 
             -   name: Install PHP
                 uses: shivammathur/setup-php@master
