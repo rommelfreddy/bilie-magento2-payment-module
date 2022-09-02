@@ -95,7 +95,10 @@ jobs:
                         --admin-password=GithubActions123 \
                         --language=de_DE \
                         --currency=EUR \
-                        --timezone=Europe/Berlin
+                        --timezone=Europe/Berlin \
+                        --search-engine=elasticsearch7 \
+                        --elasticsearch-host=localhost \
+                        --elasticsearch-port=9200
 
                     php bin/magento setup:upgrade
                     php bin/magento setup:di:compile
