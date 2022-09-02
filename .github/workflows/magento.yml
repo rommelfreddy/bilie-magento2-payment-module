@@ -24,10 +24,6 @@ jobs:
                     - 3306:3306
 
         steps:
-            -   name: Add auth credentials for composer
-                run: |
-                    echo '{ "http-basic": { "repo.magento.com": { "username": "${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }}", "password": "${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }}"} } }' > ~/.composer/auth.json
-
             -   name: Install PHP
                 uses: shivammathur/setup-php@master
                 with:
@@ -47,6 +43,8 @@ jobs:
                 run: |
                     mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
                     composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition /tmp/build
+                env:
+                    COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
 
             -   name: Setup composer local repo
                 run: |
