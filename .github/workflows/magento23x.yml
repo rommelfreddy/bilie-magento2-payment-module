@@ -10,8 +10,8 @@ jobs:
             max-parallel: 15
             fail-fast: false
             matrix:
-                magento-version: ['2.3.0', '2.3.1']
-                php-version: ['7.2', '7.3']
+                magento-version: ['2.3.0', '2.3.1', '2.3.2', '2.3.3', '2.3.4']
+                php-version: ['7.2']
                 composer-version: ['1']
 
         services:
