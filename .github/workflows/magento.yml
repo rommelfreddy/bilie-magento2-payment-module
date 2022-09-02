@@ -40,32 +40,43 @@ jobs:
                 with:
                     stack-version: 7.6.0
 
-            -   name: PHP Syntax Checker
-                run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
+            -   name: Cache Magento Source
+                id: cache-magento
+                uses: actions/cache@v3
+                with:
+                    path: magento
+                    key: magento-cache-${{ matrix.magento-version }}-${{ matrix.php-version }}-${{ matrix.composer-version }}
+                    restore-keys: |
+                        magento-cache-${{ matrix.magento-version }}-${{ matrix.php-version }}-${{ matrix.composer-version }}
 
-            -   name: Download Magento
+            -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
+                name: Download Magento
                 run: |
                     mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
-                    composer create-project --ignore-platform-reqs --repository-url=https://repo.magento.com/ magento/project-community-edition:${{ matrix.magento-version }} /tmp/build
+                    composer create-project --ignore-platform-reqs --repository-url=https://repo.magento.com/ magento/project-community-edition:${{ matrix.magento-version }} magento/
 
-            -   name: Setup composer local repo
+            -   if: ${{ steps.cache-magento.outputs.cache-hit != 'true' }}
+                name: Setup composer local repo
                 run: |
-                    composer config repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }' -d /tmp/build
-                    composer config minimum-stability dev -d /tmp/build
-                    composer config prefer-stable true -d /tmp/build
+                    composer config repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }' -d magento/
+                    composer config minimum-stability dev -d magento/
+                    composer config prefer-stable true -d magento/
 
             -   uses: actions/checkout@v2
                 with:
-                    path: /tmp/build/_github/billie-payment
+                    path: magento/_github/billie-payment
 
             -   name: Install module
                 run: |
-                    composer validate -d /tmp/build/_github/billie-payment
-                    composer require --ignore-platform-reqs billie/magento2-payment-module -d /tmp/build
+                    composer validate -d magento/_github/billie-payment
+                    composer require --ignore-platform-reqs billie/magento2-payment-module -d magento/
+
+            -   name: PHP Syntax Checker
+                run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
 
             -   name: Install Magento
                 run: |
-                    cd /tmp/build
+                    cd magento/
                     php bin/magento setup:install \
                         --base-url=http://magento.local/ \
                         --db-host=127.0.0.1 \
