@@ -76,6 +76,7 @@ jobs:
             -   name: Install module
                 run: |
                     composer validate -d magento/_github/billie-payment
+                    cat magento/composer.json
                     composer require -d magento/ billie/magento2-payment-module
 
             -   name: PHP Syntax Checker
