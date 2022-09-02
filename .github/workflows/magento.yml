@@ -25,7 +25,9 @@ jobs:
 
         steps:
             -   name: Add auth credentials for composer
-                run: composer config --global http-basic.repo.magento.com ${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }} ${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }} --auth
+                run: |
+                    composer config --global repositories.github '{ "type": "vcs", "url": "repo.magento.com" }'
+                    composer config --global http-basic.repo.magento.com ${{ secrets.MAGENTO_COMPOSER_PUBLIC_KEY }} ${{ secrets.MAGENTO_COMPOSER_PRIVATE_KEY }} --auth
 
             -   name: Install PHP
                 uses: shivammathur/setup-php@master
@@ -49,7 +51,7 @@ jobs:
 
             -   name: Setup composer local repo
                 run: |
-                    composer config repositories.github '{ \"type\": \"path\", \"url\": \"_github/*\", \"options\": { \"symlink\": true } }' -d /tmp/build
+                    composer config repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }' -d /tmp/build
                     composer config minimum-stability dev -d /tmp/build
                     composer config prefer-stable true -d /tmp/build
 
