@@ -81,7 +81,7 @@ jobs:
             -   name: Install Magento
                 run: |
                     cd magento/
-                    rm app/etc/env.php
+                    rm -f app/etc/env.php
                     php bin/magento setup:install \
                         --base-url=http://magento.local/ \
                         --db-host=127.0.0.1 \
