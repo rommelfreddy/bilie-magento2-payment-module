@@ -71,7 +71,7 @@ jobs:
                     composer remove billie/magento2-payment-module
 
                     composer config -d _github/billie-payment/ version dev-$(cd _github/billie-payment/ && git rev-parse --abbrev-ref HEAD)
-                    composer validate -d magento/_github/billie-payment
+                    composer validate -d _github/billie-payment
                     cat composer.json
                     composer require billie/magento2-payment-module
 
