@@ -61,6 +61,7 @@ jobs:
                 with:
                     path: magento/_github/billie-payment
 
+            ## setting the composer version in the module-composer-file is required cause the composer v1 does not recognize the version from git.
             -   name: Install module
                 run: |
                     composer config -d magento/ repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }'

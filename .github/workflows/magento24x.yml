@@ -66,6 +66,7 @@ jobs:
                 with:
                     path: magento/_github/billie-payment
 
+            ## setting the composer version in the module-composer-file is required cause the composer v1 does not recognize the version from git.
             -   name: Install module
                 run: |
                     composer config -d magento/ repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }'
@@ -73,6 +74,7 @@ jobs:
                     composer config -d magento/ prefer-stable true
                     composer remove -d magento/ billie/magento2-payment-module
 
+                    composer config -d _github/billie-payment/ version dev-$(cd _github/billie-payment/ && git rev-parse --abbrev-ref HEAD)
                     composer validate -d magento/_github/billie-payment
                     cat magento/composer.json
                     composer require -d magento/ billie/magento2-payment-module
