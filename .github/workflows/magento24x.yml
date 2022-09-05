@@ -69,15 +69,16 @@ jobs:
             ## setting the composer version in the module-composer-file is required cause the composer v1 does not recognize the version from git.
             -   name: Install module
                 run: |
-                    composer config -d magento/ repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }'
-                    composer config -d magento/ minimum-stability dev
-                    composer config -d magento/ prefer-stable true
-                    composer remove -d magento/ billie/magento2-payment-module
+                    cd magento/
+                    composer config repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }'
+                    composer config minimum-stability dev
+                    composer config prefer-stable true
+                    composer remove billie/magento2-payment-module
 
                     composer config -d _github/billie-payment/ version dev-$(cd _github/billie-payment/ && git rev-parse --abbrev-ref HEAD)
                     composer validate -d magento/_github/billie-payment
-                    cat magento/composer.json
-                    composer require -d magento/ billie/magento2-payment-module
+                    cat composer.json
+                    composer require billie/magento2-payment-module
 
             -   name: PHP Syntax Checker
                 run: find magento/_github/billie-payment -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
