@@ -77,6 +77,7 @@ jobs:
 
                     composer config -d _github/billie-payment/ version dev-$(cd _github/billie-payment/ && git rev-parse --abbrev-ref HEAD)
                     composer validate -d _github/billie-payment
+                    cat _github/billie-payment/composer.json
                     cat composer.json
                     composer require billie/magento2-payment-module
 
