@@ -70,10 +70,11 @@ jobs:
                     composer config prefer-stable true
                     composer remove billie/magento2-payment-module
 
-                    composer config -d _github/billie-payment/ version dev-$(cd _github/billie-payment/ && git rev-parse --abbrev-ref HEAD)
+                    composer config -d _github/billie-payment/ version 0.0.1
                     composer validate -d _github/billie-payment
+                    cat _github/billie-payment/composer.json
                     cat composer.json
-                    composer require billie/magento2-payment-module
+                    composer require billie/magento2-payment-module:0.0.1
 
             -   name: PHP Syntax Checker
                 run: find magento/_github/billie-payment -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
