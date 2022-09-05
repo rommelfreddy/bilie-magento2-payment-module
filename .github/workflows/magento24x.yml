@@ -71,6 +71,7 @@ jobs:
                     composer config -d magento/ repositories.github '{ "type": "path", "url": "_github/*", "options": { "symlink": true } }'
                     composer config -d magento/ minimum-stability dev
                     composer config -d magento/ prefer-stable true
+                    composer remove -d magento/ billie/magento2-payment-module
 
                     composer validate -d magento/_github/billie-payment
                     cat magento/composer.json
